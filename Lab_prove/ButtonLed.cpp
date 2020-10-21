@@ -5,6 +5,7 @@
 #endif
 
 #include <iostream>
+#include <Pushbutton.h>
 
 #ifndef NO_PI
 #include <wiringPi.h>
@@ -16,6 +17,7 @@ using namespace std;
 /// Configuration
 ///
 const int LedColor= 0;
+const int Button=1;
 const int timeoutMs = 1000; // 1 second
 
 ///
@@ -26,6 +28,7 @@ void init()
 #ifndef NO_PI
     wiringPiSetup();
     pinMode(LedColor, OUTPUT);
+    
 #endif
 }
 
