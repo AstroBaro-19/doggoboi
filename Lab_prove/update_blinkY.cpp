@@ -14,8 +14,8 @@ using namespace std;
 
 //configurazione
 const int Red=0;
-const int Green=1;
-const int Yellow=2;
+const int Yellow=1;
+const int Green=2;
 
 void init()
 {
@@ -64,8 +64,8 @@ void normalCycle()
 {
     int currentState=0;
     int timeR=15;
-    int timeG=10;
     int timeY=5;
+    int timeG=10;
 
     while(1)
     {
