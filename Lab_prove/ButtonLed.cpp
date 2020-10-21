@@ -15,7 +15,7 @@ using namespace std;
 ///
 /// Configuration
 ///
-const int led_Blue = 0;
+const int LedColor= 0;
 const int timeoutMs = 1000; // 1 second
 
 ///
