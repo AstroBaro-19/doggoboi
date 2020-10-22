@@ -23,4 +23,5 @@ void loop() {
   
   digitalWrite(pinLed, ledState);
   valButtonOld = valButton;
+  sleep(1);
 }
