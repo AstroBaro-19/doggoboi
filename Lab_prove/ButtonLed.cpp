@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#ifndef NO_PI
+#ifndef NO_PI 
 #include <wiringPi.h>
 #endif
 
@@ -17,7 +17,7 @@ using namespace std;
 ///
 const int LedColor= 0;
 const int ButtonPin=1;
-const int timeoutMs = 1000; // 1 second
+int ledState=0;
 
 ///
 /// Utils
@@ -32,6 +32,7 @@ void init()
 #endif
 }
 
+
 void setLed(int ledNumber, bool value)
 {
 #ifndef NO_PI
@@ -41,55 +42,21 @@ void setLed(int ledNumber, bool value)
 #endif
 }
 
+void cycle()
+{
+
+    while(1)
+    {
+		cout << "segnale input: " << digitalWrite(ButtonPin,value) << endl;
+		sleep(1);
+	}
+
+}
 
 int main()
 {
     init();
-    
-    bool onoff = true;
-
-    while(1)
-    {
-		if (digitalRead(ButtonPin)==LOW)
-		{
-			setLed(LedColor, onoff);
-			onoff = !onoff;
-
-	#ifndef NO_PI
-			delay(timeoutMs);
-	#else
-			usleep(timeoutMs * 1000);
-	#endif
-		} // main loop
-
-	}
-        
+    cycle();
+            
     return 0;
 }
-
-/*
-int main()
-{
-    init();
-    
-    bool onoff = true;
-
-    while(1)
-    {
-		if (digitalRead(ButtonPin)==LOW)
-		{
-			setLed(LedColor, onoff);
-			onoff = !onoff;
-
-	#ifndef NO_PI
-			delay(timeoutMs);
-	#else
-			usleep(timeoutMs * 1000);
-	#endif
-		} // main loop
-
-	}
-        
-    return 0;
-}
-*/
