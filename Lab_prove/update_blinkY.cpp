@@ -16,6 +16,7 @@ using namespace std;
 const int Red=0;
 const int Yellow=1;
 const int Green=2;
+
 bool onoff=false;  
 
 void init()
@@ -77,8 +78,8 @@ void normalCycle()
     
     int currentState=0;
     int timeR=15;
-    int timeG=10;
     int timeY=5;
+    int timeG=10;
 
     int i=0;
     while(i<3)
