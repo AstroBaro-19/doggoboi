@@ -14,8 +14,9 @@ using namespace std;
 
 //configurazione
 const int Red=0;
-const int Green=1;
-const int Yellow=2;
+const int Yellow=1;
+const int Green=2;
+bool onoff=false;  
 
 void init()
 {
@@ -37,10 +38,16 @@ void setLed(int LedColor, bool value)
 #endif
 }
 
-//blink Yellow inizializzazione semaforo
+//blink Yellow 
+//inizializzazione semaforo led spenti
 void blinkYellow()
-{  
-    bool onoff=true;
+{      
+    setLed(Red,onoff);
+    setLed(Yellow,onoff);
+    setLed(Green,onoff);
+    
+    onoff=!onoff;
+    
     int count=0;
     while(count<10)
     {
@@ -71,7 +78,7 @@ void normalCycle()
     {
         cout << "currentState: " << currentState << endl;
     
-
+    
     if(currentState == 0){
             setOnOff(timeR,Red);
             currentState = 2;
@@ -81,8 +88,8 @@ void normalCycle()
         } else{
             setOnOff(timeY,Yellow);
             currentState = 0;
-
-        }
+        }    
+        
     }
 }
 
