@@ -38,25 +38,29 @@ void setLed(int LedColor, bool value)
 #endif
 }
 
+
+
 //blink Yellow 
 //inizializzazione semaforo led spenti
 void blinkYellow()
-{      
+{  
     setLed(Red,onoff);
     setLed(Yellow,onoff);
     setLed(Green,onoff);
-    
+        
     onoff=!onoff;
-    
+        
     int count=0;
-    while(count<10)
+    while(count<10)  //blink 10 sec: 5s ON e 5s OFF
     {
-    setLed(Yellow,onoff);
-    onoff=!onoff;   
-    sleep(1);
-    count++;
-    }
+        setLed(Yellow,onoff);
+        onoff=!onoff;   
+        sleep(1);
+        count++;
+        cout << "Blink Yellow for: " << count << " seconds" << endl;
+    }        
 }
+
 
 //settaggio tempo mantenimento luce
 void setOnOff(int time, int Led)
@@ -69,12 +73,15 @@ void setOnOff(int time, int Led)
 //ciclo normale del semaforo
 void normalCycle()
 {
+    blinkYellow();   //funzione ripresa
+    
     int currentState=0;
     int timeR=15;
     int timeG=10;
     int timeY=5;
 
-    while(1)
+    int i=0;
+    while(i<3)
     {
         cout << "currentState: " << currentState << endl;
     
@@ -88,8 +95,12 @@ void normalCycle()
         } else{
             setOnOff(timeY,Yellow);
             currentState = 0;
-        }    
-        
+            
+            i++;
+            cout << "N° giri completati: " << i << endl;    
+            
+        }
+    
     }
 }
 
@@ -97,7 +108,6 @@ void normalCycle()
 int main()
 {
     init();
-    blinkYellow();
     normalCycle();
     return 0;
 }
