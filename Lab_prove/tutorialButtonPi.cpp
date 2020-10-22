@@ -5,7 +5,6 @@
 #endif
 
 #include <iostream>
-#include <Pushbutton.h>
 
 #ifndef NO_PI
 #include <wiringPi.h>
@@ -20,18 +19,17 @@ using namespace std;
 const int LedColor= 0;
 const int ButtonPin=1;
 const int timeoutMs = 1000; // 1 second
-const int g_led_status=0;
-
+int g_led_status=0;
 
 void init()
 {
 #ifndef NO_PI
     wiringPiSetup();
     pinMode(LedColor, OUTPUT);
-    pinMode(ButtonPin, INPUT);
-    pullUpDnControl(ButtonPin, PUD_UP);    
+    pinMode(ButtonPin, INPUT);  
 #endif
 }
+
 
 
 int main()
@@ -40,15 +38,41 @@ int main()
     
     while(1)
     {
-        if(0 == digitalRead(ButtonPin))
+        if(digitalRead(ButtonPin)==LOW or digitalRead(ButtonPin)==HIGH)
+        {   
+            digitalWrite(LedColor,g_led_status); 
+           
+        }
+      
+        else
         {
             g_led_status =! g_led_status;
+            digitalWrite(LedColor,g_led_status);
         }
-        digitalWrite(LedColor,g_led_status);
+        
     }
-    return 0;
+    
+    return 0;        
 }
 
+
+
+
+//int main()
+//{
+//    init();
+    
+//    while(1)
+//    {
+//        if(0 == digitalRead(ButtonPin))
+//        {
+//            g_led_status =! g_led_status;
+//        }
+//        digitalWrite(LedColor,g_led_status);
+        
+//    }
+//    return 0;
+//}
 
 
 

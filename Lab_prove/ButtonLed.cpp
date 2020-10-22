@@ -5,7 +5,6 @@
 #endif
 
 #include <iostream>
-#include <Pushbutton.h>
 
 #ifndef NO_PI
 #include <wiringPi.h>
@@ -17,7 +16,7 @@ using namespace std;
 /// Configuration
 ///
 const int LedColor= 0;
-const int Button=1;
+const int ButtonPin=1;
 const int timeoutMs = 1000; // 1 second
 
 ///
@@ -28,6 +27,7 @@ void init()
 #ifndef NO_PI
     wiringPiSetup();
     pinMode(LedColor, OUTPUT);
+    pinMode(ButtonPin, INPUT);
     
 #endif
 }
@@ -41,29 +41,55 @@ void setLed(int ledNumber, bool value)
 #endif
 }
 
+
 int main()
 {
     init();
-
-    // Ok, inited. Now do your work...
-
+    
     bool onoff = true;
 
     while(1)
     {
-       	// We can now add our custom logics here
-	    /////
+		if (digitalRead(ButtonPin)==LOW)
+		{
+			setLed(LedColor, onoff);
+			onoff = !onoff;
 
-        // If this led blinks, then the loop is working
-        setLed(LedColor, onoff);
-        onoff = !onoff;
+	#ifndef NO_PI
+			delay(timeoutMs);
+	#else
+			usleep(timeoutMs * 1000);
+	#endif
+		} // main loop
 
-#ifndef NO_PI
-        delay(timeoutMs);
-#else
-        usleep(timeoutMs * 1000);
-#endif
-    } // main loop
-
+	}
+        
     return 0;
 }
+
+/*
+int main()
+{
+    init();
+    
+    bool onoff = true;
+
+    while(1)
+    {
+		if (digitalRead(ButtonPin)==LOW)
+		{
+			setLed(LedColor, onoff);
+			onoff = !onoff;
+
+	#ifndef NO_PI
+			delay(timeoutMs);
+	#else
+			usleep(timeoutMs * 1000);
+	#endif
+		} // main loop
+
+	}
+        
+    return 0;
+}
+*/
