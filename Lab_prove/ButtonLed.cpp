@@ -28,7 +28,6 @@ void init()
     wiringPiSetup();
     pinMode(LedColor, OUTPUT);
     pinMode(ButtonPin, INPUT);
-    
 #endif
 }
 
@@ -55,41 +54,16 @@ int main()
 			setLed(LedColor, onoff);
 			onoff = !onoff;
 
-	#ifndef NO_PI
-			delay(timeoutMs);
-	#else
-			usleep(timeoutMs * 1000);
-	#endif
-		} // main loop
-
-	}
-        
-    return 0;
-}
-
-/*
-int main()
-{
-    init();
-    
-    bool onoff = true;
-
-    while(1)
-    {
-		if (digitalRead(ButtonPin)==LOW)
+		}
+		
+		else 
 		{
 			setLed(LedColor, onoff);
 			onoff = !onoff;
-
-	#ifndef NO_PI
-			delay(timeoutMs);
-	#else
-			usleep(timeoutMs * 1000);
-	#endif
-		} // main loop
+		}
 
 	}
         
     return 0;
 }
-*/
+
