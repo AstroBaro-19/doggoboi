@@ -12,39 +12,38 @@
 
 using namespace std;
 
-int pinLed       = 0;
-int pinButton    = 1;
- 
+int pinButton= 0;
+
 void setup() {
 #ifndef NO_PI
   wiringPiSetup();
-  pinMode(pinLed, OUTPUT);
-  pinMode(pinButton, INPUT);
+  pinMode(pinButton,INPUT);
+  pullUpDnControl(pinButton, PUD_UP);
 #endif
 }
+
 
 void cycle()
 {
-#ifndef NO_PI
-  int valButton = digitalRead(pinButton);
-  
+
   while(1)
   {
-    if(valButton==HIGH)
+
+    if (digitalRead(pinButton)==0)
     {
-      digitalWrite(pinLed,valButton);
+      cout << "Button pressed" << endl;
+      sleep(1);
     }
-    else
-    {
-      digitalWrite(pinLed, valButton);
-    }
-    
   }
-#endif
-}
+}  
 
 
-int main() {
+
+
+int main() 
+{
   setup();
   cycle();
+  return 0;
 }
+
