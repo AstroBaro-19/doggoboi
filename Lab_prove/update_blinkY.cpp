@@ -16,6 +16,8 @@ using namespace std;
 const int Red=0;
 const int Yellow=1;
 const int Green=2;
+int pinButton=3;
+bool ButtonState=false;
 
 bool onoff=false;  
 
@@ -26,6 +28,8 @@ void init()
     pinMode(Red, OUTPUT); 
     pinMode(Green, OUTPUT); 
     pinMode(Yellow, OUTPUT); 
+    pinMode(pinButton,INPUT);
+    pullUpDnControl(pinButton, PUD_UP);
 #endif
 }
 
@@ -39,15 +43,19 @@ void setLed(int LedColor, bool value)
 #endif
 }
 
+void initLeds()
+{
+    setLed(Red,onoff);
+    setLed(Yellow,onoff);
+    setLed(Green,onoff);
+}
 
 
 //blink Yellow 
 //inizializzazione semaforo led spenti
 void blinkYellow()
 {  
-    setLed(Red,onoff);
-    setLed(Yellow,onoff);
-    setLed(Green,onoff);
+    initLeds();
         
     onoff=!onoff;
         
@@ -73,7 +81,9 @@ void setOnOff(int time, int Led)
 
 //ciclo normale del semaforo
 void normalCycle()
-{
+{   
+    initLeds();
+            
     blinkYellow();   //funzione ripresa
     
     int currentState=0;
@@ -83,11 +93,11 @@ void normalCycle()
 
     int i=0;
     while(i<3)
-    {
-        cout << "currentState: " << currentState << endl;
-    
-    
-    if(currentState == 0){
+        {
+            cout << "currentState: " << currentState << endl;
+            
+            
+        if(currentState == 0){
             setOnOff(timeR,Red);
             currentState = 2;
         } else if(currentState == 2){
@@ -96,19 +106,46 @@ void normalCycle()
         } else{
             setOnOff(timeY,Yellow);
             currentState = 0;
-            
+                    
             i++;
             cout << "N° giri completati: " << i << endl;    
+                    
+        }
             
         }
-    
-    }
+            
+            
 }
 
 //main program
 int main()
 {
     init();
-    normalCycle();
+    
+    
+    int ButtonCounter=1;
+    while(ButtonCounter<=2)
+    {
+
+        if (digitalRead(pinButton)==0)
+        {
+          cout << "Button pressed " << ButtonCounter << " times" << endl;
+          if (ButtonState==false)
+          { 
+            ButtonState=!ButtonState;
+            ButtonCounter++;
+            sleep(1);
+            
+            normalCycle();
+          } 
+          else
+          {
+            ButtonState=false;
+            ButtonCounter++;
+            sleep(1);
+          }
+        }
+    }
+    
     return 0;
 }
