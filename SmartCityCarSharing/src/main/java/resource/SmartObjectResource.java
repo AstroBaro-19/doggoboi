@@ -1,12 +1,21 @@
 package resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+//Creating generic abstract class
 public abstract  class SmartObjectResource<T> {
+
+    private static final Logger logger = LoggerFactory.getLogger(SmartObjectResource.class);
 
     private String id;
 
     private String type;
 
+
     public SmartObjectResource() {
+
     }
 
     public SmartObjectResource(String id, String type) {
@@ -29,6 +38,8 @@ public abstract  class SmartObjectResource<T> {
     public void setType(String type) {
         this.type = type;
     }
+
+    public abstract T loadUpdatedValue();
 
     @Override
     public String toString() {
