@@ -6,6 +6,10 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
 
 //Creating generic abstract class
 public abstract  class SmartObjectResource<T> {

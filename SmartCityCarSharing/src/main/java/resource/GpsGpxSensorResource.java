@@ -5,9 +5,13 @@ import io.jenetics.jpx.WayPoint;
 import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.*;
 import java.util.stream.Collectors;
+
+/**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
 
 public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescriptor>{
 

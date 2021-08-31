@@ -1,6 +1,11 @@
 package resource;
 
 /**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
+
+/**
  * Creating generic Interface to handle generic Sensor Resources with several values: Double, String, Integer, ...
  * @param <T>
  */

@@ -1,5 +1,10 @@
 package model;
 
+/**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
+
 public class GpsLocationDescriptor {
 
     public static final String FILE_LOCATION_PROVIDER = "location_provider_file";

@@ -10,6 +10,11 @@ import java.util.TimerTask;
 import java.util.UUID;
 
 /**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
+
+/**
  * Modelling Battery Sensor Resource extending the generic abstract class "SmartObjectResource"
  */
 public class BatterySensorResource extends SmartObjectResource<Double> {
