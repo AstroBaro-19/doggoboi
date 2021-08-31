@@ -24,7 +24,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     private static final double MAX_BATTERY_LEVEL_CONSUMPTION = 1.0;
 
-    private static final long UPDATE_PERIOD = 5000; //5 Seconds
+    private static final long UPDATE_PERIOD = 5000; //5 Seconds for the updated value to come out
 
     private static final long TASK_DELAY_TIME = 5000; //Seconds before starting the periodic update task
 
@@ -81,7 +81,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
             @Override
             public void run() {
                 updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
-                logger.info("Updated Battery Level: {}", updatedBatteryLevel);
+                //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
 
                 //Notify the Listener after data changing
                 notifyUpdate(updatedBatteryLevel);
