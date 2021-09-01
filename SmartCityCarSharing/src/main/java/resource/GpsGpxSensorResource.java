@@ -29,10 +29,12 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private Timer updateTimer = null;
 
+    // List that contains Gpx wayPoints
     private List<WayPoint> wayPointList= null;
 
     private ListIterator<WayPoint> wayPointListIterator;
 
+    // Constructors
     public GpsGpxSensorResource() {
         super(UUID.randomUUID().toString(),GpsGpxSensorResource.RESOURCE_TYPE);
         init();
@@ -46,7 +48,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     /**
      * Load from GPX_FILE_NAME the Gpx wayPoints - Creating a List of wayPoints
-     * Start periodic Location Update from existing and available Gpx wayPoints, using a Timer
      */
     private void init() {
         try {
@@ -67,6 +68,11 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
         }
     }
 
+    /**
+     * Start periodic Location Update from existing and available Gpx wayPoints, using a Timer
+     * -> An iterator for lists that allows the programmer to traverse the list in either direction,
+     *    modify the list during iteration, and obtain the iterator current position in the list.
+     */
     private void periodicEventUpdate() {
 
         logger.info("Starting new Timer task ... Starts in {} ms ... Update Period: {} ms", TASK_DELAY_TIME, UPDATE_PERIOD);

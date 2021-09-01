@@ -6,7 +6,7 @@ package resource;
  */
 
 /**
- * Creating generic Interface to handle generic Sensor Resources with several values: Double, String, Integer, ...
+ * Creating generic Interface to handle generic Sensor Resources with several data types: Double, String, Integer, ...
  * @param <T>
  */
 public interface ResourceDataListener<T> {

@@ -22,7 +22,7 @@ public abstract  class SmartObjectResource<T> {
 
     protected List<ResourceDataListener<T>> resourceListenerList;
 
-
+    // Constructors
     public SmartObjectResource() {
         this.resourceListenerList=new ArrayList<>();
 
@@ -35,6 +35,7 @@ public abstract  class SmartObjectResource<T> {
 
     }
 
+    // Getter & Setter
     public String getId() {
         return id;
     }
@@ -51,7 +52,9 @@ public abstract  class SmartObjectResource<T> {
         this.type = type;
     }
 
+
     public abstract T loadUpdatedValue();
+
 
     protected void notifyUpdate(T updatedValue){
         if (this.resourceListenerList!=null && this.resourceListenerList.size()>0){

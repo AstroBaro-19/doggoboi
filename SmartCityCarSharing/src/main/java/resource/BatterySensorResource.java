@@ -41,6 +41,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     private Timer updateTimer = null;
 
+    // Constructors
     public BatterySensorResource() {
         super(UUID.randomUUID().toString(),BatterySensorResource.RESOURCE_TYPE);
         init();
@@ -54,9 +55,9 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     /**
      * Initializing new random Battery Level for the scooter
-     * range of the battery: {MIN_BATTERY_LEVEL, MAX_BATTERY_LEVEL}
+     * Range of the battery: {MIN_BATTERY_LEVEL, MAX_BATTERY_LEVEL}
      *
-     * Modify Battery Level using a Timer
+     * Modify Battery Level using a Timer [Timer Task]
      */
     private void init() {
 
@@ -76,7 +77,8 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     /**
      * Periodic Task: Randomize Battery Level consumption
-     */
+     * TODO - implementing major consumption for "elevation" parameter...??
+      */
     private void periodicEventUpdate() {
 
         logger.info("Starting new Timer task ... Starts in {} ms ... Update Period: {} ms", TASK_DELAY_TIME, UPDATE_PERIOD);
@@ -100,6 +102,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
     public Double loadUpdatedValue() {
         return this.updatedBatteryLevel;
     }
+
 
     public static void main(String[] args) {
 
