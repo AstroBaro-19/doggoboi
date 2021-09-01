@@ -7,11 +7,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @project - Smart City Car Sharing
  */
 
-// Jackson library
+// Jackson's library
 // @JsonProperty: is used to indicate external property name,
 // name used in data format (JSON or one of other supported data formats)
 
-public class TelemetryMessage extends GenericMessageStructure{
+public class TelemetryMessage<T> {
 
     @JsonProperty("timestamp")
     private long timestamp;
@@ -20,18 +20,18 @@ public class TelemetryMessage extends GenericMessageStructure{
     private String type;
 
     @JsonProperty("data")
-    private Object dataValue;
+    private T dataValue;
 
     public TelemetryMessage() {
     }
 
-    public TelemetryMessage(String type, Object dataValue) {
+    public TelemetryMessage(String type, T dataValue) {
         this.timestamp = System.currentTimeMillis();
         this.type = type;
         this.dataValue = dataValue;
     }
 
-    public TelemetryMessage(long timestamp, String type, Object dataValue) {
+    public TelemetryMessage(long timestamp, String type, T dataValue) {
         this.timestamp = System.currentTimeMillis();
         this.type = type;
         this.dataValue = dataValue;
@@ -53,11 +53,11 @@ public class TelemetryMessage extends GenericMessageStructure{
         this.type = type;
     }
 
-    public Object getDataValue() {
+    public T getDataValue() {
         return dataValue;
     }
 
-    public void setDataValue(Object dataValue) {
+    public void setDataValue(T dataValue) {
         this.dataValue = dataValue;
     }
 

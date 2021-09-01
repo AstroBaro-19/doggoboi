@@ -2,6 +2,11 @@ package message;
 
 import java.util.Map;
 
+/**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
+
 public abstract class GenericMessageStructure {
 
     private String type;
@@ -12,6 +17,12 @@ public abstract class GenericMessageStructure {
     private Map<String, Object> metadata;
 
     public GenericMessageStructure() {
+    }
+
+    public GenericMessageStructure(String type, Map<String, Object> metadata) {
+        this.type = type;
+        this.timestamp = System.currentTimeMillis();
+        this.metadata = metadata;
     }
 
     public GenericMessageStructure(String type, long timestamp, Map<String, Object> metadata) {

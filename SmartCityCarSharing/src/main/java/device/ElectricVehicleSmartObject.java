@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import message.TelemetryMessage;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
@@ -15,6 +16,11 @@ import resource.SmartObjectResource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+
+/**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
 
 public class ElectricVehicleSmartObject {
 
@@ -78,6 +84,8 @@ public class ElectricVehicleSmartObject {
 
                 logger.info("Starting the vehicle emulation...");
 
+                registerToControlChannel();
+
                 registerToAvailableResources();
 
             }
@@ -130,12 +138,34 @@ public class ElectricVehicleSmartObject {
         }
     }
 
+    private void registerToControlChannel() {
+
+        try{
+
+            String deviceControlTopic = String.format("%s/%s/%s", BASIC_TOPIC, vehicleId, CONTROL_TOPIC);
+
+            logger.info("Registering to Control Topic ({}) ... ", deviceControlTopic);
+
+            this.mqttClient.subscribe(deviceControlTopic, new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    if(message != null)
+                        logger.info("[CONTROL CHANNEL] -> Control Message Received -> {}", new String(message.getPayload()));
+                    else
+                        logger.error("[CONTROL CHANNEL] -> Null control message received !");
+                }
+            });
+
+        }catch (Exception e){
+            logger.error("ERROR Registering to Control Channel ! Msg: {}", e.getLocalizedMessage());
+        }
+    }
+
+
     private void publishTelemetryData(String topic, TelemetryMessage telemetryMessage) throws MqttException, JsonProcessingException {
 
         logger.info("Sending to topic: {} - data: {}",topic, telemetryMessage);
-
-        /**
-         *
 
         // setting correct environment - multiple controls
         if (this.mqttClient!=null && this.mqttClient.isConnected() && telemetryMessage!=null && topic!=null){
@@ -150,7 +180,7 @@ public class ElectricVehicleSmartObject {
             logger.info("Data correctly published. Published to topic: {}",topic);
 
         }
-        */
+
     }
 
 }

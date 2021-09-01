@@ -6,6 +6,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+/**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
+
 public class GpxTest_modified_track {
 
     private static final Logger logger = LoggerFactory.getLogger(GpxTest_modified_track.class);
