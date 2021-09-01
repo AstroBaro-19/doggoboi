@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="SmartCityCarSharing" />
+        <module name="SmartCityCArSharing" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="SmartCityCarSharing" target="16" />
+    </bytecodeTargetLevel>
   </component>
 </project>
