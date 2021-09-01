@@ -17,7 +17,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private static final Logger logger = LoggerFactory.getLogger(BatterySensorResource.class);
 
-    private static final String RESOURCE_TYPE = "iot:sensor:gps";
+    public static final String RESOURCE_TYPE = "iot:sensor:gps";
 
     private static final long UPDATE_PERIOD = 1000; //1 Second for the updated value to come out
 

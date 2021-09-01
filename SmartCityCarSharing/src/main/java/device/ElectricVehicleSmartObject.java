@@ -1,11 +1,19 @@
 package device;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import message.TelemetryMessage;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import resource.BatterySensorResource;
+import resource.GpsGpxSensorResource;
+import resource.ResourceDataListener;
 import resource.SmartObjectResource;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class ElectricVehicleSmartObject {
@@ -65,25 +73,84 @@ public class ElectricVehicleSmartObject {
         try {
 
             if (this.mqttClient.isConnected() &&
-                    this.vehicleId!=null &&
-                    this.vehicleId.length()>0 &&
-                    this.resourceMap!=null &&
-                    this.resourceMap.size()>0){
+                    this.vehicleId!=null && this.vehicleId.length()>0 &&
+                    this.resourceMap!=null && this.resourceMap.size()>0){
 
                 logger.info("Starting the vehicle emulation...");
 
-                registerToAvailableResource();
+                registerToAvailableResources();
 
             }
 
 
         }catch (Exception e){
-            logger.error("Error starting the Vehicle Emulatore. Message: {}",e.getLocalizedMessage());
+            logger.error("Error starting the Vehicle Emulator. Message: {}",e.getLocalizedMessage());
         }
     }
 
-    private void registerToAvailableResource() {
-        //TODO - fallo domani
+    private void registerToAvailableResources() {
+        try{
+            this.resourceMap.entrySet().forEach(resourceEntry ->{
+
+                if (resourceEntry.getKey()!=null && resourceEntry.getValue()!=null){
+                    SmartObjectResource smartObjectResource = resourceEntry.getValue();
+
+                    // Registration message
+                    logger.info("Registering to Resource {} (Id: {}) notifications...",
+                            smartObjectResource.getType(),
+                            smartObjectResource.getId());
+
+                    // effective registration
+                    if (smartObjectResource.getType().equals(GpsGpxSensorResource.RESOURCE_TYPE) ||
+                            smartObjectResource.getType().equals(BatterySensorResource.RESOURCE_TYPE)){
+                            smartObjectResource.addDataListener(new ResourceDataListener() {
+                                @Override
+                                public void onDataChange(ResourceDataListener resource, Object updatedValue) {
+
+                                    String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
+
+                                    try {
+                                        publishTelemetryData(topic, new TelemetryMessage(smartObjectResource.getType(),updatedValue));
+                                    } catch (MqttException e) {
+                                        e.printStackTrace();
+                                    } catch (JsonProcessingException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                    }
+
+
+                }
+
+            });
+        }
+        catch (Exception e){
+            logger.error("Error during the registration. Message: {}",e.getLocalizedMessage());
+        }
+    }
+
+    private void publishTelemetryData(String topic, TelemetryMessage telemetryMessage) throws MqttException, JsonProcessingException {
+
+        logger.info("Sending to topic: {} - data: {}",topic, telemetryMessage);
+
+        /**
+         *
+
+        // setting correct environment - multiple controls
+        if (this.mqttClient!=null && this.mqttClient.isConnected() && telemetryMessage!=null && topic!=null){
+
+            // String creation - serialized Payload
+            String messagePayload = mapper.writeValueAsString(telemetryMessage);
+
+            MqttMessage mqttMessage = new MqttMessage(messagePayload.getBytes());
+            mqttMessage.setQos(0);
+            mqttClient.publish(topic, mqttMessage);
+
+            logger.info("Data correctly published. Published to topic: {}",topic);
+
+        }
+        */
     }
 
 }

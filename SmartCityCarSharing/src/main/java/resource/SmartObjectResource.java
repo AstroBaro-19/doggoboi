@@ -35,6 +35,35 @@ public abstract  class SmartObjectResource<T> {
 
     }
 
+    public abstract T loadUpdatedValue();
+
+    public void addDataListener(ResourceDataListener<T> resourceDataListener){
+        if (resourceListenerList!=null){
+            this.resourceListenerList.add(resourceDataListener);
+        }
+    }
+
+    public void removeDataListener(ResourceDataListener<T> resourceDataListener){
+        if (resourceListenerList!=null && resourceListenerList.contains(resourceDataListener)){
+            this.resourceListenerList.remove(resourceDataListener);
+        }
+    }
+
+    protected void notifyUpdate(T updatedValue){
+        if (this.resourceListenerList!=null && this.resourceListenerList.size()>0){
+            this.resourceListenerList.forEach(resourceDataListener -> {
+                if (resourceDataListener!=null) {
+                    resourceDataListener.onDataChange((ResourceDataListener<T>) this,updatedValue);
+                }
+            });
+        }
+
+        else {
+            logger.error("Empty or Null Resource Data Listener ! Nothing to notify ...");
+        }
+
+    }
+
     public String getId() {
         return id;
     }
@@ -50,34 +79,6 @@ public abstract  class SmartObjectResource<T> {
     public void setType(String type) {
         this.type = type;
     }
-
-    public abstract T loadUpdatedValue();
-
-    protected void notifyUpdate(T updatedValue){
-        if (this.resourceListenerList!=null && this.resourceListenerList.size()>0){
-            this.resourceListenerList.forEach(resourceDataListener -> {
-                if (resourceDataListener!=null){
-                    resourceDataListener.onDataChange(resourceDataListener,updatedValue);
-                }
-                else {
-                    logger.error("Nothing to notify ...");
-                }
-            });
-        }
-    }
-
-    public void addDataListener(ResourceDataListener<T> resourceDataListener){
-        if (resourceListenerList!=null){
-            this.resourceListenerList.add(resourceDataListener);
-        }
-    }
-
-    public void removeDataListener(ResourceDataListener<T> resourceDataListener){
-        if (resourceListenerList!=null && resourceListenerList.contains(resourceDataListener)){
-            this.resourceListenerList.remove(resourceDataListener);
-        }
-    }
-
 
     @Override
     public String toString() {

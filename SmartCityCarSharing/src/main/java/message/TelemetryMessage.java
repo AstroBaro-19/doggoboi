@@ -25,8 +25,14 @@ public class TelemetryMessage extends GenericMessageStructure{
     public TelemetryMessage() {
     }
 
+    public TelemetryMessage(String type, Object dataValue) {
+        this.timestamp = System.currentTimeMillis();
+        this.type = type;
+        this.dataValue = dataValue;
+    }
+
     public TelemetryMessage(long timestamp, String type, Object dataValue) {
-        this.timestamp = timestamp;
+        this.timestamp = System.currentTimeMillis();
         this.type = type;
         this.dataValue = dataValue;
     }

@@ -11,5 +11,5 @@ package resource;
  */
 public interface ResourceDataListener<T> {
     // (modified resource, modified value)
-    public void onDataChange(ResourceDataListener<T> resource, T updatedValue);
+    void onDataChange(ResourceDataListener<T> resource, T updatedValue);
 }

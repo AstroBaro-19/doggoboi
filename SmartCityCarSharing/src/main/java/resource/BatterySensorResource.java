@@ -33,7 +33,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     private static final long TASK_DELAY_TIME = 5000; //Seconds before starting the periodic update task
 
-    private static final String RESOURCE_TYPE = "iot:sensor:battery";
+    public static final String RESOURCE_TYPE = "iot:sensor:battery";
 
     private double updatedBatteryLevel;
 
