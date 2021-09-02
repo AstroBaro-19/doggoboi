@@ -10,6 +10,7 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import resource.GpsGpxSensorResource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class BatteryMonitoringConsumer {
     private static int BROKER_PORT = 1883;
 
     //E.g. fleet/vehicle/e0c7433d-8457-4a6b-8084-595d500076cc/telemetry/battery
-    private static final String TARGET_TOPIC = "single/vehicle/+/telemetry/battery";
+    private static final String TARGET_TOPIC = "single/vehicle/+/telemetry/#";
 
     private static final String ALARM_MESSAGE_CONTROL_TYPE = "battery_alarm_message";
 
@@ -66,7 +67,7 @@ public class BatteryMonitoringConsumer {
             //When the application stops all the temporary data will be deleted.
             MqttClientPersistence persistence = new MemoryPersistence();
 
-            //The the persistence is not passed to the constructor the default file persistence is used.
+            //The persistence is not passed to the constructor the default file persistence is used.
             //In case of a file-based storage the same MQTT client UUID should be used
             IMqttClient client = new MqttClient(
                     String.format("tcp://%s:%d", BROKER_ADDRESS, BROKER_PORT), //Create the URL from IP and PORT
@@ -86,14 +87,27 @@ public class BatteryMonitoringConsumer {
             logger.info("Connected ! Client Id: {}", clientId);
 
             Map<String, Double> batteryHistoryMap = new HashMap<>();
+
+
             mapper = new ObjectMapper();
 
             //Subscribe to the target topic #. In that case the consumer will receive (if authorized) all the message
-            //passing through the broker
-            client.subscribe(TARGET_TOPIC, (topic, msg) -> {
+            //passing through the broker. [Gps & Battery messages]
+            client.subscribe(TARGET_TOPIC , (topic, msg) -> {
+
+                /**
+                 * Messages
+                 * -> Every second gps messages
+                 * -> Every 5 seconds battery messages
+                 */
+                logger.info("Received Data (Topic: {}) -> Data: {}", topic, new String(msg.getPayload()));
 
                 Optional<TelemetryMessage<Double>> telemetryMessageOptional = parseTelemetryMessagePayload(msg);
 
+                /**
+                 * Monitoring Battery Level
+                 * -> Sending notification if decreases under a certain Battery Level threshold
+                 */
                 if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(BatterySensorResource.RESOURCE_TYPE)){
 
                     Double newBatteryLevel = telemetryMessageOptional.get().getDataValue();
@@ -114,15 +128,50 @@ public class BatteryMonitoringConsumer {
                             String controlTopic = String.format("%s/%s", topic.replace("/telemetry/battery", ""), CONTROL_TOPIC);
                             publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>(){
                                 {
-                                    put("charging_station_id", "cs00001");
-                                    put("charging_station_lat", 44.79503800000001);
-                                    put("charging_station_lng", 10.32686911666667);
+                                    put("car_parking_id", "freepark-001");
+                                    put("car_parking_lat", 44.79454615000001);
+                                    put("car_parking_lng", 10.3359437);
                                 }
                             }));
                         }
                     }
 
                 }
+
+                /**
+                 * Optional<TelemetryMessage<Double>> telemetryMessageOptional = parseTelemetryMessagePayload(msg);
+                 *
+                 *                 if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(BatterySensorResource.RESOURCE_TYPE)){
+                 *
+                 *                     Double newBatteryLevel = telemetryMessageOptional.get().getDataValue();
+                 *                     logger.info("New Battery Telemetry Data Received ! Battery Level: {}", newBatteryLevel);
+                 *
+                 *                     //If is the first value
+                 *                     if(!batteryHistoryMap.containsKey(topic) || newBatteryLevel > batteryHistoryMap.get(topic)){
+                 *                         logger.info("New Battery Level Saved for: {}", topic);
+                 *                         batteryHistoryMap.put(topic, newBatteryLevel);
+                 *                         isAlarmNotified = false;
+                 *                     }
+                 *                     else {
+                 *                         if(isBatteryLevelAlarm(batteryHistoryMap.get(topic), newBatteryLevel) && !isAlarmNotified){
+                 *                             logger.info("BATTERY LEVEL ALARM DETECTED ! Sending Control Notification ...");
+                 *                             isAlarmNotified = true;
+                 *
+                 *                             //Incoming Topic = fleet/vehicle/fa18f676-8198-4e9f-90e0-c50a5e419b94/telemetry/battery
+                 *                             String controlTopic = String.format("%s/%s", topic.replace("/telemetry/battery", ""), CONTROL_TOPIC);
+                 *                             publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>(){
+                 *                                 {
+                 *                                     put("charging_station_id", "cs00001");
+                 *                                     put("charging_station_lat", 44.79503800000001);
+                 *                                     put("charging_station_lng", 10.32686911666667);
+                 *                                 }
+                 *                             }));
+                 *                         }
+                 *                     }
+                 *
+                 *                 }
+                 */
+
 
             });
 
