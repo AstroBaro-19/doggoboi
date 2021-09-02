@@ -45,7 +45,7 @@ public class BatteryMonitoringConsumer {
     private static int BROKER_PORT = 1883;
 
     //E.g. fleet/vehicle/e0c7433d-8457-4a6b-8084-595d500076cc/telemetry/battery
-    private static final String TARGET_TOPIC = "single/vehicle/+/telemetry/#";
+    private static final String TARGET_TOPIC = "single/vehicle/+/telemetry/battery";
 
     private static final String ALARM_MESSAGE_CONTROL_TYPE = "battery_alarm_message";
 
@@ -91,8 +91,10 @@ public class BatteryMonitoringConsumer {
 
             mapper = new ObjectMapper();
 
-            //Subscribe to the target topic #. In that case the consumer will receive (if authorized) all the message
-            //passing through the broker. [Gps & Battery messages]
+            //Subscribe to the target topic battery. In that case the consumer will receive (if authorized) all the battery messages
+            //passing through the broker
+            logger.info("Subscribing to topic: {}", TARGET_TOPIC);
+
             client.subscribe(TARGET_TOPIC , (topic, msg) -> {
 
                 /**
@@ -100,14 +102,12 @@ public class BatteryMonitoringConsumer {
                  * -> Every second gps messages
                  * -> Every 5 seconds battery messages
                  */
+
                 logger.info("Received Data (Topic: {}) -> Data: {}", topic, new String(msg.getPayload()));
 
+                // Telemetry Message's De-serialization
                 Optional<TelemetryMessage<Double>> telemetryMessageOptional = parseTelemetryMessagePayload(msg);
 
-                /**
-                 * Monitoring Battery Level
-                 * -> Sending notification if decreases under a certain Battery Level threshold
-                 */
                 if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(BatterySensorResource.RESOURCE_TYPE)){
 
                     Double newBatteryLevel = telemetryMessageOptional.get().getDataValue();
@@ -137,6 +137,15 @@ public class BatteryMonitoringConsumer {
                     }
 
                 }
+
+
+                /**
+                 * Monitoring Battery Level
+                 * -> Sending notification if decreases under a certain Battery Level threshold
+                 */
+
+
+
 
                 /**
                  * Optional<TelemetryMessage<Double>> telemetryMessageOptional = parseTelemetryMessagePayload(msg);
