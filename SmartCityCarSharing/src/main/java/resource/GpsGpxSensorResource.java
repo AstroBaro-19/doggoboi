@@ -1,12 +1,16 @@
 package resource;
 
-import io.jenetics.jpx.GPX;
-import io.jenetics.jpx.WayPoint;
+import io.jenetics.jpx.*;
+import io.jenetics.jpx.geom.Geoid;
 import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.GpsUtils;
+
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
@@ -72,6 +76,9 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
         logger.info("Starting new Timer task ... Starts in {} ms ... Update Period: {} ms", TASK_DELAY_TIME, UPDATE_PERIOD);
 
         this.updateTimer = new Timer();
+
+
+
         this.updateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -79,17 +86,11 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                 if (wayPointListIterator.hasNext()){
 
                     WayPoint currentWayPoint = wayPointListIterator.next();
+                    WayPoint nextWayPoint = wayPointListIterator.next();
 
-                    /**
-                     *  -- Logger stamp of currentWayPoint --
-                     *
-                     * logger.info("{} -> Lat:{} - Lng: {} - Elev: {} - Time: {}",
-                     *                             RESOURCE_TYPE,
-                     *                             currentWayPoint.getLatitude(),
-                     *                             currentWayPoint.getLongitude(),
-                     *                             currentWayPoint.getElevation(),
-                     *                             currentWayPoint.getTime().get());
-                     */
+
+                    GpsUtils.distance();
+
 
                     updatedGpsLocationDescriptor=new GpsLocationDescriptor(
                             currentWayPoint.getLatitude().doubleValue(),
@@ -98,22 +99,36 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                             GpsLocationDescriptor.FILE_LOCATION_PROVIDER
                     );
 
-                    WayPoint previousWayPoint=currentWayPoint;
-                }
-                else{
-                    logger.info("End of WayPoint list. Reversing the list... ");
-                    Collections.reverse(wayPointList);
-                    wayPointListIterator = wayPointList.listIterator();
-                    logger.info("The list is now reversed. The iteration through the list continues...");
+                    //Notify the Listener after data changing
+                    notifyUpdate(updatedGpsLocationDescriptor);
                 }
 
-                //Notify the Listener after data changing
-                notifyUpdate(updatedGpsLocationDescriptor);
+                else{
+
+                    logger.info("No more WayPoints available ...");
+
+                    //Stopping the periodic event
+                    updateTimer.cancel();
+
+                    //distance covered
+                    try {
+
+                        final Length path_length = GPX.read(GPX_FILE_NAME).wayPoints().collect(Geoid.WGS84.toPathLength());
+                        logger.info("Length: {}",path_length);
+                    }
+
+                    catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
 
             }
         }, TASK_DELAY_TIME, UPDATE_PERIOD);
 
     }
+
+
 
     @Override
     public GpsLocationDescriptor loadUpdatedValue() {
