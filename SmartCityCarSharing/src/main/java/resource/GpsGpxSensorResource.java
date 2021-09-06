@@ -86,10 +86,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                 if (wayPointListIterator.hasNext()){
 
                     WayPoint currentWayPoint = wayPointListIterator.next();
-                    WayPoint nextWayPoint = wayPointListIterator.next();
-
-
-                    GpsUtils.distance();
 
 
                     updatedGpsLocationDescriptor=new GpsLocationDescriptor(

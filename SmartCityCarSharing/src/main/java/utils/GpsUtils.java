@@ -1,5 +1,10 @@
 package utils;
 
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Longitude;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author Marco Picone, Ph.D. - picone.m@gmail.com
  * @project mqtt-demo-fleet-monitoring
@@ -38,25 +43,55 @@ public class GpsUtils {
         return Math.sqrt(distance);
     }
 
-    public static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
-        if ((lat1 == lat2) && (lon1 == lon2)) {
-            return 0;
+    /**
+     *
+     * @param lat1
+     * @param lon1
+     * @param lat2
+     * @param lon2
+     * @param unit
+     * @return
+     *
+     * public static double distance(double lat1, double lon1, double lat2, double lon2, String unit) {
+     *         if ((lat1 == lat2) && (lon1 == lon2)) {
+     *             return 0;
+     *         }
+     *         else {
+     *             double theta = lon1 - lon2;
+     *             double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+     *             dist = Math.acos(dist);
+     *             dist = Math.toDegrees(dist);
+     *             dist = dist * 60 * 1.1515;
+     *             if (unit.equals("K")) {
+     *                 dist = dist * 1.609344;
+     *             } else if (unit.equals("N")) {
+     *                 dist = dist * 0.8684;
+     *             }
+     *
+     *             System.out.println("Distance: " + dist);
+     *
+     *             return (dist);
+     *         }
+     *     }
+     */
+
+
+    public static void distance(Latitude latitude1, Latitude latitude2, Longitude longitude1, Longitude longitude2) {
+
+        final Logger logger = LoggerFactory.getLogger(GpsUtils.class);
+
+        if ((latitude1 == latitude2) && (longitude1 == longitude2)) {
+            logger.info("Starting point!");
         }
         else {
-            double theta = lon1 - lon2;
-            double dist = Math.sin(Math.toRadians(lat1)) * Math.sin(Math.toRadians(lat2)) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.cos(Math.toRadians(theta));
+            double theta = longitude1.doubleValue() - longitude2.doubleValue();
+            double dist = Math.sin(Math.toRadians(latitude1.doubleValue())) * Math.sin(Math.toRadians(latitude2.doubleValue())) + Math.cos(Math.toRadians(latitude1.doubleValue())) * Math.cos(Math.toRadians(latitude2.doubleValue())) * Math.cos(Math.toRadians(theta));
             dist = Math.acos(dist);
             dist = Math.toDegrees(dist);
-            dist = dist * 60 * 1.1515;
-            if (unit.equals("K")) {
-                dist = dist * 1.609344;
-            } else if (unit.equals("N")) {
-                dist = dist * 0.8684;
-            }
+            dist = dist * 60 * 1.609344;
 
-            System.out.println("Distance: " + dist);
+            logger.info("Distance: {}", dist);
 
-            return (dist);
         }
     }
 
