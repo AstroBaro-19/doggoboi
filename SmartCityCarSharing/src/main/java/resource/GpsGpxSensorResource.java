@@ -79,6 +79,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                 if (wayPointListIterator.hasNext()){
 
                     WayPoint currentWayPoint = wayPointListIterator.next();
+
                     /**
                      *  -- Logger stamp of currentWayPoint --
                      *
@@ -95,8 +96,9 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                             currentWayPoint.getLongitude().doubleValue(),
                             (currentWayPoint.getElevation().isPresent() ? currentWayPoint.getElevation().get().doubleValue() : 0.0),
                             GpsLocationDescriptor.FILE_LOCATION_PROVIDER
-
                     );
+
+                    WayPoint previousWayPoint=currentWayPoint;
                 }
                 else{
                     logger.info("End of WayPoint list. Reversing the list... ");
