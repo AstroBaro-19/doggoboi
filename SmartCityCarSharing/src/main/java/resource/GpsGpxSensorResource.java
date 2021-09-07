@@ -107,28 +107,35 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                 if (wayPointListIterator.hasNext()){
 
-                    WayPoint newCurrentWayPoint= wayPointList.listIterator(i).next();
-                    WayPoint nextWayPoint = wayPointList.listIterator(j).next();
-                    logger.info("current: {} - next: {}",newCurrentWayPoint,nextWayPoint);
+                    try{
+                        WayPoint newCurrentWayPoint= wayPointList.listIterator(i).next();
+                        WayPoint nextWayPoint = wayPointList.listIterator(j).next();
+                        logger.info("current: {} - next: {}",newCurrentWayPoint,nextWayPoint);
 
-                    updatedGpsLocationDescriptor=new GpsLocationDescriptor(
-                            currentWayPoint.getLatitude().doubleValue(),
-                            currentWayPoint.getLongitude().doubleValue(),
-                            (currentWayPoint.getElevation().isPresent() ? currentWayPoint.getElevation().get().doubleValue() : 0.0),
-                            GpsLocationDescriptor.FILE_LOCATION_PROVIDER
-                    );
+                        updatedGpsLocationDescriptor=new GpsLocationDescriptor(
+                                currentWayPoint.getLatitude().doubleValue(),
+                                currentWayPoint.getLongitude().doubleValue(),
+                                (currentWayPoint.getElevation().isPresent() ? currentWayPoint.getElevation().get().doubleValue() : 0.0),
+                                GpsLocationDescriptor.FILE_LOCATION_PROVIDER
+                        );
 
-                    //Notify the Listener after data changing
-                    notifyUpdate(updatedGpsLocationDescriptor);
+                        //Notify the Listener after data changing
+                        notifyUpdate(updatedGpsLocationDescriptor);
 
-                    GpsUtils.distance(
-                            newCurrentWayPoint.getLatitude(),
-                            nextWayPoint.getLatitude(),
-                            newCurrentWayPoint.getLongitude(),
-                            nextWayPoint.getLongitude()
-                            );
-                    i++;
-                    j++;
+                        GpsUtils.distance(
+                                newCurrentWayPoint.getLatitude(),
+                                nextWayPoint.getLatitude(),
+                                newCurrentWayPoint.getLongitude(),
+                                nextWayPoint.getLongitude()
+                        );
+                        i++;
+                        j++;
+                    }
+                    catch (Exception e){
+                        logger.error("No elements in list available ...");
+                        updateTimer.cancel();
+                    }
+
                 }
 
                 else{
