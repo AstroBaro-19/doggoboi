@@ -36,7 +36,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
     private List<WayPoint> wayPointList= null;
 
     private ListIterator<WayPoint> wayPointListIterator;
-    private int i=-1;
+
 
     public GpsGpxSensorResource() {
         super(UUID.randomUUID().toString(),GpsGpxSensorResource.RESOURCE_TYPE);
@@ -87,7 +87,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                 if (wayPointListIterator.hasNext()){
 
                     WayPoint currentWayPoint = wayPointListIterator.next();
-                    i++;
+
 
                     updatedGpsLocationDescriptor=new GpsLocationDescriptor(
                             currentWayPoint.getLatitude().doubleValue(),
@@ -134,52 +134,45 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    private void forLoopEventUpdate() throws InterruptedException {
-        for (int i=0; i< wayPointList.size(); i++){
-            if (wayPointListIterator.hasNext()){
-
-                WayPoint currentWayPoint = wayPointListIterator.next();
-                logger.info("currentWayPoint: {}",currentWayPoint);
-
-                updatedGpsLocationDescriptor=new GpsLocationDescriptor(
-                        currentWayPoint.getLatitude().doubleValue(),
-                        currentWayPoint.getLongitude().doubleValue(),
-                        (currentWayPoint.getElevation().isPresent() ? currentWayPoint.getElevation().get().doubleValue() : 0.0),
-                        GpsLocationDescriptor.FILE_LOCATION_PROVIDER
-                );
-
-                //Notify the Listener after data changing
-                notifyUpdate(updatedGpsLocationDescriptor);
-                Thread.sleep(1000);
-
-            }
-
-    }
-        logger.info("No more WayPoints available ...");
-
-        //distance covered
-        try {
-
-            final Length path_length = GPX.read(GPX_FILE_NAME).wayPoints().collect(Geoid.WGS84.toPathLength());
-            logger.info("Length: {}",path_length);
-        }
-
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-}
+    /**
+     *
+     * @throws InterruptedException
+     *
+     * private void forLoopEventUpdate() throws InterruptedException {
+     *         for (int i=0; i< wayPointList.size(); i++){
+     *             if (wayPointListIterator.hasNext()){
+     *
+     *                 WayPoint currentWayPoint = wayPointListIterator.next();
+     *                 logger.info("currentWayPoint: {}",currentWayPoint);
+     *
+     *                 updatedGpsLocationDescriptor=new GpsLocationDescriptor(
+     *                         currentWayPoint.getLatitude().doubleValue(),
+     *                         currentWayPoint.getLongitude().doubleValue(),
+     *                         (currentWayPoint.getElevation().isPresent() ? currentWayPoint.getElevation().get().doubleValue() : 0.0),
+     *                         GpsLocationDescriptor.FILE_LOCATION_PROVIDER
+     *                 );
+     *
+     *                 //Notify the Listener after data changing
+     *                 notifyUpdate(updatedGpsLocationDescriptor);
+     *                 Thread.sleep(1000);
+     *
+     *             }
+     *
+     *     }
+     *         logger.info("No more WayPoints available ...");
+     *
+     *         //distance covered
+     *         try {
+     *
+     *             final Length path_length = GPX.read(GPX_FILE_NAME).wayPoints().collect(Geoid.WGS84.toPathLength());
+     *             logger.info("Length: {}",path_length);
+     *         }
+     *
+     *         catch (IOException e) {
+     *             e.printStackTrace();
+     *         }
+     * }
+     */
 
 
     @Override
