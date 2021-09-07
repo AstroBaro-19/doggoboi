@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescriptor>{
 
-    private static final Logger logger = LoggerFactory.getLogger(BatterySensorResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(GpsGpxSensorResource.class);
 
     public static final String RESOURCE_TYPE = "iot:sensor:gps";
 
@@ -63,7 +63,10 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
             this.updatedGpsLocationDescriptor = new GpsLocationDescriptor();
 
+
             this.wayPointList=GPX.read(GPX_FILE_NAME).wayPoints().collect(Collectors.toList());
+
+
             logger.info("GPX File WayPoints correctly loaded into the list. List size: {}",wayPointList.size());
 
             //Using a class called Iterator, we are able to go through the collection, in this case a list of Gpx WayPoints
@@ -113,16 +116,16 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                         logger.info("current: {} - next: {}",newCurrentWayPoint,nextWayPoint);
 
                         updatedGpsLocationDescriptor=new GpsLocationDescriptor(
-                                currentWayPoint.getLatitude().doubleValue(),
-                                currentWayPoint.getLongitude().doubleValue(),
-                                (currentWayPoint.getElevation().isPresent() ? currentWayPoint.getElevation().get().doubleValue() : 0.0),
+                                newCurrentWayPoint.getLatitude().doubleValue(),
+                                newCurrentWayPoint.getLongitude().doubleValue(),
+                                (newCurrentWayPoint.getElevation().isPresent() ? newCurrentWayPoint.getElevation().get().doubleValue() : 0.0),
                                 GpsLocationDescriptor.FILE_LOCATION_PROVIDER
                         );
 
                         //Notify the Listener after data changing
                         notifyUpdate(updatedGpsLocationDescriptor);
 
-                        GpsUtils.distance(
+                        double distance=GpsUtils.distance(
                                 newCurrentWayPoint.getLatitude(),
                                 nextWayPoint.getLatitude(),
                                 newCurrentWayPoint.getLongitude(),
@@ -130,32 +133,34 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                         );
                         i++;
                         j++;
+
+                        totalDistance+=distance;
+                        logger.info("Total Distance update: {}",totalDistance);
                     }
                     catch (Exception e){
-                        logger.error("No elements in list available ...");
+                        logger.error("No more WayPoints available in the list ...");
                         updateTimer.cancel();
+
+                        //distance covered
+                        final Length path_length;
+
+                        try {
+                            path_length = GPX.read(GPX_FILE_NAME).wayPoints().collect(Geoid.WGS84.toPathLength());
+                            logger.info("Length: {}",path_length);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+
                     }
 
                 }
 
+                //At the end of the WayPoint List
                 else{
-
-                    logger.info("No more WayPoints available ...");
-
-                    //Stopping the periodic event
-                    updateTimer.cancel();
-
-                    //distance covered
-                    try {
-
-                        final Length path_length = GPX.read(GPX_FILE_NAME).wayPoints().collect(Geoid.WGS84.toPathLength());
-                        logger.info("Length: {}",path_length);
-                    }
-
-                    catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
+                    logger.info("Reversing WayPoint List ...");
+                    Collections.reverse(wayPointList);
+                    wayPointListIterator = wayPointList.listIterator();
+                    logger.info("Iterating backward on the GPS Waypoint List ...");
                 }
 
             }

@@ -67,11 +67,14 @@ public class GpsUtils {
      *             return (dist);
      *         }
      *     }
+     * @return
      */
 
 
-    public static void distance(Latitude latitude1, Latitude latitude2, Longitude longitude1, Longitude longitude2) {
+    public static double distance(Latitude latitude1, Latitude latitude2, Longitude longitude1, Longitude longitude2) {
 
+        double dist = 0.0;
+        
         final Logger logger = LoggerFactory.getLogger(GpsUtils.class);
 
         if ((latitude1 == latitude2) && (longitude1 == longitude2)) {
@@ -79,14 +82,16 @@ public class GpsUtils {
         }
         else {
             double theta = longitude1.doubleValue() - longitude2.doubleValue();
-            double dist = Math.sin(Math.toRadians(latitude1.doubleValue())) * Math.sin(Math.toRadians(latitude2.doubleValue())) + Math.cos(Math.toRadians(latitude1.doubleValue())) * Math.cos(Math.toRadians(latitude2.doubleValue())) * Math.cos(Math.toRadians(theta));
+            dist = Math.sin(Math.toRadians(latitude1.doubleValue())) * Math.sin(Math.toRadians(latitude2.doubleValue())) + Math.cos(Math.toRadians(latitude1.doubleValue())) * Math.cos(Math.toRadians(latitude2.doubleValue())) * Math.cos(Math.toRadians(theta));
             dist = Math.acos(dist);
             dist = Math.toDegrees(dist);
             dist = dist * 60 * 1.609344;
 
             logger.info("Distance: {}", dist);
-
+            return dist;
+            
         }
+        return dist;
     }
 
 }
