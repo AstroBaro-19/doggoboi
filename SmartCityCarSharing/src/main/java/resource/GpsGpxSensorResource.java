@@ -1,16 +1,13 @@
 package resource;
 
 import io.jenetics.jpx.*;
-import io.jenetics.jpx.geom.Geoid;
 import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.GpsUtils;
-
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 /**
  * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
@@ -38,12 +35,13 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
     private ListIterator<WayPoint> wayPointListIterator;
 
     private double totalDistance = 0;
-    private double totalDistanceElevation=0;
 
+    // Index-List Iterators {initialization}
     private int i=0;
     private int j=1;
 
 
+    // Constructors
     public GpsGpxSensorResource() {
         super(UUID.randomUUID().toString(),GpsGpxSensorResource.RESOURCE_TYPE);
         init();
@@ -55,9 +53,10 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     }
 
+
     /**
-     * Load from GPX_FILE_NAME the Gpx wayPoints - Creating a List of wayPoints
-     * Start periodic Location Update from existing and available Gpx wayPoints, using a Timer
+     * -> Load from GPX_FILE_NAME the Gpx wayPoints - Creating a List of wayPoints
+     * -> PeriodicEventUpdate
      */
     private void init() {
         try {
@@ -75,35 +74,21 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
             periodicEventUpdate();
 
-            //forLoopEventUpdate();
-
         }
         catch (Exception e){
             logger.error("Error during the initialization. Message: {}",e.getLocalizedMessage());
         }
     }
 
+    /**
+     * -> Start periodic Location Update from existing and available Gpx wayPoints, using a Timer
+     * -> Live: updating distance covered every second (based on available nextPoint in the list)
+     */
     private void periodicEventUpdate() {
 
         logger.info("Starting new Timer task ... Starts in {} ms ... Update Period: {} ms", TASK_DELAY_TIME, UPDATE_PERIOD);
 
         this.updateTimer = new Timer();
-
-        //- Point A init --------------------------------------------
-        WayPoint currentWayPoint = wayPointListIterator.next();
-
-
-        updatedGpsLocationDescriptor=new GpsLocationDescriptor(
-                currentWayPoint.getLatitude().doubleValue(),
-                currentWayPoint.getLongitude().doubleValue(),
-                (currentWayPoint.getElevation().isPresent() ? currentWayPoint.getElevation().get().doubleValue() : 0.0),
-                GpsLocationDescriptor.FILE_LOCATION_PROVIDER
-        );
-
-        //Notify the Listener after data changing
-        notifyUpdate(updatedGpsLocationDescriptor);
-        //----------------------------------------------------------
-
 
         this.updateTimer.schedule(new TimerTask() {
             @Override
@@ -113,8 +98,9 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                     try{
                         WayPoint newCurrentWayPoint= wayPointList.listIterator(i).next();
-                        WayPoint nextWayPoint = wayPointList.listIterator(j).next();
-                        logger.info("current: {} - next: {}",newCurrentWayPoint,nextWayPoint);
+                        WayPoint newNextWayPoint = wayPointList.listIterator(j).next();
+
+                        //logger.info("current: {} - next: {}",newCurrentWayPoint,newNextWayPoint);
 
                         updatedGpsLocationDescriptor=new GpsLocationDescriptor(
                                 newCurrentWayPoint.getLatitude().doubleValue(),
@@ -126,52 +112,34 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                         //Notify the Listener after data changing
                         notifyUpdate(updatedGpsLocationDescriptor);
 
-
-                        double distanceElevation = GpsUtils.distance(
+                        // Calculate Distance
+                        double distance = GpsUtils.distance(
                                 newCurrentWayPoint.getLatitude(),
-                                nextWayPoint.getLatitude(),
+                                newNextWayPoint.getLatitude(),
                                 newCurrentWayPoint.getLongitude(),
-                                nextWayPoint.getLongitude(),
+                                newNextWayPoint.getLongitude(),
                                 newCurrentWayPoint.getElevation(),
-                                nextWayPoint.getElevation()
+                                newNextWayPoint.getElevation()
                         );
+                        totalDistance += distance;
 
+                        // Increasing the indexes
                         i++;
                         j++;
 
-
-                        totalDistanceElevation+=distanceElevation;
-                        logger.info("Total DistanceElevation update: {}",totalDistanceElevation);
+                        //logger.info("Updating Total Distance: {} meters", totalDistance);
                     }
+
                     catch (Exception e){
-                        logger.error("No more WayPoints available in the list ...");
+
                         updateTimer.cancel();
 
-                        //distance covered
-                        final Length path_length;
-
-                        try {
-                            path_length = GPX.read(GPX_FILE_NAME).wayPoints().collect(Geoid.WGS84.toPathLength());
-                            logger.info("Length: {}",path_length);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
+                        logger.error("No more WayPoints available in the list ... Total Distance covered: {} meters",totalDistance);
 
                     }
-
                 }
-
-                //At the end of the WayPoint List
-                else{
-                    logger.info("Reversing WayPoint List ...");
-                    Collections.reverse(wayPointList);
-                    wayPointListIterator = wayPointList.listIterator();
-                    logger.info("Iterating backward on the GPS Waypoint List ...");
-                }
-
             }
         }, TASK_DELAY_TIME, UPDATE_PERIOD);
-
     }
 
 
