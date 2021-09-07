@@ -98,7 +98,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                     WayPoint newCurrentWayPoint= wayPointList.listIterator(i).next();
                     WayPoint newNextWayPoint = wayPointList.listIterator(j).next();
 
-                    logger.info("current: {} - next: {}",newCurrentWayPoint,newNextWayPoint);
+                    //logger.info("current: {} - next: {}",newCurrentWayPoint,newNextWayPoint);
 
                     updatedGpsLocationDescriptor=new GpsLocationDescriptor(
                             newCurrentWayPoint.getLatitude().doubleValue(),
