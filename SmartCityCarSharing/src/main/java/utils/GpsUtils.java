@@ -1,9 +1,12 @@
 package utils;
 
 import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
 
 /**
  * @author Marco Picone, Ph.D. - picone.m@gmail.com
@@ -71,27 +74,23 @@ public class GpsUtils {
      */
 
 
-    public static double distance(Latitude latitude1, Latitude latitude2, Longitude longitude1, Longitude longitude2) {
+    public static double distance(Latitude latitude1, Latitude latitude2, Longitude longitude1, Longitude longitude2, Optional<Length> elevation1, Optional<Length> elevation2) {
+        final int R = 6371; // Radius of the earth
 
-        double dist = 0.0;
-        
-        final Logger logger = LoggerFactory.getLogger(GpsUtils.class);
+        double latDistance = Math.toRadians(latitude2.doubleValue() - latitude1.doubleValue());
+        double lonDistance = Math.toRadians(longitude2.doubleValue() - longitude1.doubleValue());
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(latitude1.doubleValue())) * Math.cos(Math.toRadians(latitude2.doubleValue()))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
 
-        if ((latitude1 == latitude2) && (longitude1 == longitude2)) {
-            logger.info("Starting point!");
-        }
-        else {
-            double theta = longitude1.doubleValue() - longitude2.doubleValue();
-            dist = Math.sin(Math.toRadians(latitude1.doubleValue())) * Math.sin(Math.toRadians(latitude2.doubleValue())) + Math.cos(Math.toRadians(latitude1.doubleValue())) * Math.cos(Math.toRadians(latitude2.doubleValue())) * Math.cos(Math.toRadians(theta));
-            dist = Math.acos(dist);
-            dist = Math.toDegrees(dist);
-            dist = dist * 60 * 1.609344;
+        double height = elevation1.get().doubleValue()  - elevation2.get().doubleValue();
 
-            logger.info("Distance: {}", dist);
-            return dist;
-            
-        }
-        return dist;
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+        //System.out.println("Distance: " + distance);
+
+        return Math.sqrt(distance);
     }
-
 }
