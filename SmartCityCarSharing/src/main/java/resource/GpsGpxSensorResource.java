@@ -131,6 +131,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                                 newCurrentWayPoint.getLongitude(),
                                 nextWayPoint.getLongitude()
                         );
+
                         i++;
                         j++;
 
