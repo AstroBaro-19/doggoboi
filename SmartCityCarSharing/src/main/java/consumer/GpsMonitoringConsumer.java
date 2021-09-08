@@ -3,8 +3,6 @@ package consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.jenetics.jpx.WayPoint;
 import message.TelemetryMessage;
 import model.GpsLocationDescriptor;
 import resource.GpsGpxSensorResource;
@@ -15,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import utils.GpsDistance;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Gps Monitoring
@@ -40,11 +37,10 @@ public class GpsMonitoringConsumer {
     private static ObjectMapper mapper;
 
     private static ArrayList<GpsLocationDescriptor> gpsLocationDescriptorArrayList =new ArrayList<>();
-    private static ListIterator<GpsLocationDescriptor> gpsLocationDescriptorListIterator=null;
 
     private static int i=0;
-    private static double totalDistance=0;
 
+    private static double totalDistance=0;
 
 
     public static void main(String [ ] args) {
@@ -100,12 +96,13 @@ public class GpsMonitoringConsumer {
 
                     logger.info("New Gps Telemetry Data Received ! Data: {}",gpsLocationDescriptor);
 
-
+                    // Adding new received WayPoint into the List
                     gpsLocationDescriptorArrayList.add(gpsLocationDescriptor);
 
-                    logger.info("CurrentPoint: {}",gpsLocationDescriptor);
-                    logger.info("PointforCalc-> Lat: {} - Long: {}",gpsLocationDescriptorArrayList.get(i).getLatitude(),gpsLocationDescriptorArrayList.get(i).getLongitude());
-
+                    /**
+                     * Updating Distance between two points, using the gpsLocationDescriptorArrayList
+                     * -> Checking the size of the list if the distance calculation is possible
+                     */
                     try {
                         if (gpsLocationDescriptorArrayList.size()>1){
 
@@ -127,12 +124,9 @@ public class GpsMonitoringConsumer {
                             logger.info("Waiting for new Gps Waypoints ...");
                         }
 
-
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-
-
                 }
             });
 

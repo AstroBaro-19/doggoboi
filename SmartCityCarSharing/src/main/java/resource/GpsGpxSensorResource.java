@@ -32,11 +32,8 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private List<WayPoint> wayPointList= null;
 
-    private double totalDistance = 0;
+    private ListIterator<WayPoint> wayPointListIterator;
 
-    // Index-List Iterators {initialization}
-    private int i=0;
-    private int j=1;
 
 
     // Constructors
@@ -65,6 +62,8 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
             logger.info("GPX File WayPoints correctly loaded into the list. List size: {}",wayPointList.size());
 
+            this.wayPointListIterator = this.wayPointList.listIterator();
+
             periodicEventUpdate();
 
         }
@@ -88,61 +87,25 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
             @Override
             public void run() {
 
-                try{
-                    WayPoint newCurrentWayPoint= wayPointList.listIterator(i).next();
-                    WayPoint newNextWayPoint = wayPointList.listIterator(j).next();
+                if(wayPointListIterator.hasNext()){
 
-                    //logger.info("current: {} - next: {}",newCurrentWayPoint,newNextWayPoint);
+                    WayPoint currentWayPoint = wayPointListIterator.next();
 
-                    updatedGpsLocationDescriptor=new GpsLocationDescriptor(
-                            newCurrentWayPoint.getLatitude().doubleValue(),
-                            newCurrentWayPoint.getLongitude().doubleValue(),
-                            (newCurrentWayPoint.getElevation().isPresent() ? newCurrentWayPoint.getElevation().get().doubleValue() : 0.0),
-                            GpsLocationDescriptor.FILE_LOCATION_PROVIDER
-                    );
+                    updatedGpsLocationDescriptor = new GpsLocationDescriptor(
+                            currentWayPoint.getLatitude().doubleValue(),
+                            currentWayPoint.getLongitude().doubleValue(),
+                            (currentWayPoint.getElevation().isPresent() ? currentWayPoint.getElevation().get().doubleValue() : 0.0),
+                            GpsLocationDescriptor.FILE_LOCATION_PROVIDER);
 
-                    //Notify the Listener after data changing
                     notifyUpdate(updatedGpsLocationDescriptor);
 
-                    // Calculate Distance
-                    double distance = GpsDistance.distance(
-                            newCurrentWayPoint.getLatitude(),
-                            newNextWayPoint.getLatitude(),
-                            newCurrentWayPoint.getLongitude(),
-                            newNextWayPoint.getLongitude(),
-                            newCurrentWayPoint.getElevation(),
-                            newNextWayPoint.getElevation()
-                    );
-                    totalDistance += distance;
-
-                    // Increasing the indexes
-                    i++;
-                    j++;
-
-                    //logger.info("Updating Total Distance: {} meters", totalDistance);
                 }
-
-                catch (Exception e){
-
+                else {
                     updateTimer.cancel();
-
-                    // ----- Updating the last gps WayPoint after Index iterator j out-scaled the list ---------
-                    WayPoint newCurrentWayPoint= wayPointList.listIterator(i).next();
-
-                    updatedGpsLocationDescriptor=new GpsLocationDescriptor(
-                            newCurrentWayPoint.getLatitude().doubleValue(),
-                            newCurrentWayPoint.getLongitude().doubleValue(),
-                            (newCurrentWayPoint.getElevation().isPresent() ? newCurrentWayPoint.getElevation().get().doubleValue() : 0.0),
-                            GpsLocationDescriptor.FILE_LOCATION_PROVIDER
-                    );
-
-                    //Notify the Listener after data changing
-                    notifyUpdate(updatedGpsLocationDescriptor);
-                    // -----------------------------------------------------------------------------------------
-
-                    logger.error("No more WayPoints available in the list ... Total Distance covered: {} meters",totalDistance);
-
+                    logger.info("No more WayPoints available ...");
                 }
+
+
             }
         }, TASK_DELAY_TIME, UPDATE_PERIOD);
     }
