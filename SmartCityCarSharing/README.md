@@ -1,6 +1,6 @@
 Branch of prof_project_completed
 
--> Implementation of GpsMonitoringConsumer
+-> Problems related to gpsDistance are now fixed
 
 -> Notes: find a solution about joining the consumers ...
 
