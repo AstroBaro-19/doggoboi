@@ -1,7 +1,3 @@
-Branch of prof_project_completed
+Branch: 
 
--> Implementation of GpsMonitoringConsumer
-
--> Notes: find a solution about joining the consumers ...
-
--> Using a personalized GPX file
+-> Collect all data, no distance cal implementation ...
