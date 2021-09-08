@@ -10,8 +10,6 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import resource.GpsGpxSensorResource;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -91,17 +89,16 @@ public class BatteryMonitoringConsumer {
 
             mapper = new ObjectMapper();
 
-            //Subscribe to the target topic battery. In that case the consumer will receive (if authorized) all the battery messages
-            //passing through the broker
+
+            /**
+             * Monitoring Battery Level
+             * -> Sending notification if decreases under a certain Battery Level threshold
+             */
+
             logger.info("Subscribing to topic: {}", TARGET_TOPIC);
 
+            //Subscribe to the target topic battery. In that case the consumer will receive (if authorized) all the battery messages passing through the broker
             client.subscribe(TARGET_TOPIC , (topic, msg) -> {
-
-                /**
-                 * Messages
-                 * -> Every second gps messages
-                 * -> Every 5 seconds battery messages
-                 */
 
                 logger.info("Received Data (Topic: {}) -> Data: {}", topic, new String(msg.getPayload()));
 
@@ -120,6 +117,7 @@ public class BatteryMonitoringConsumer {
                         isAlarmNotified = false;
                     }
                     else {
+
                         if(isBatteryLevelAlarm(batteryHistoryMap.get(topic), newBatteryLevel) && !isAlarmNotified){
                             logger.info("BATTERY LEVEL ALARM DETECTED ! Sending Control Notification ...");
                             isAlarmNotified = true;
@@ -135,53 +133,7 @@ public class BatteryMonitoringConsumer {
                             }));
                         }
                     }
-
                 }
-
-
-                /**
-                 * Monitoring Battery Level
-                 * -> Sending notification if decreases under a certain Battery Level threshold
-                 */
-
-
-
-
-                /**
-                 * Optional<TelemetryMessage<Double>> telemetryMessageOptional = parseTelemetryMessagePayload(msg);
-                 *
-                 *                 if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(BatterySensorResource.RESOURCE_TYPE)){
-                 *
-                 *                     Double newBatteryLevel = telemetryMessageOptional.get().getDataValue();
-                 *                     logger.info("New Battery Telemetry Data Received ! Battery Level: {}", newBatteryLevel);
-                 *
-                 *                     //If is the first value
-                 *                     if(!batteryHistoryMap.containsKey(topic) || newBatteryLevel > batteryHistoryMap.get(topic)){
-                 *                         logger.info("New Battery Level Saved for: {}", topic);
-                 *                         batteryHistoryMap.put(topic, newBatteryLevel);
-                 *                         isAlarmNotified = false;
-                 *                     }
-                 *                     else {
-                 *                         if(isBatteryLevelAlarm(batteryHistoryMap.get(topic), newBatteryLevel) && !isAlarmNotified){
-                 *                             logger.info("BATTERY LEVEL ALARM DETECTED ! Sending Control Notification ...");
-                 *                             isAlarmNotified = true;
-                 *
-                 *                             //Incoming Topic = fleet/vehicle/fa18f676-8198-4e9f-90e0-c50a5e419b94/telemetry/battery
-                 *                             String controlTopic = String.format("%s/%s", topic.replace("/telemetry/battery", ""), CONTROL_TOPIC);
-                 *                             publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>(){
-                 *                                 {
-                 *                                     put("charging_station_id", "cs00001");
-                 *                                     put("charging_station_lat", 44.79503800000001);
-                 *                                     put("charging_station_lng", 10.32686911666667);
-                 *                                 }
-                 *                             }));
-                 *                         }
-                 *                     }
-                 *
-                 *                 }
-                 */
-
-
             });
 
         }catch (Exception e){

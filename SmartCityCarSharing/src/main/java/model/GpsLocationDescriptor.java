@@ -19,8 +19,8 @@ public class GpsLocationDescriptor {
 
     private Double elevation;
 
-    //TODO String provider for GPS files ...??
     private String fileProvider;
+
 
     public GpsLocationDescriptor() {
     }

@@ -4,7 +4,7 @@ import io.jenetics.jpx.*;
 import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.GpsUtils;
+import utils.GpsDistance;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,8 +31,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
     private Timer updateTimer = null;
 
     private List<WayPoint> wayPointList= null;
-
-    private ListIterator<WayPoint> wayPointListIterator;
 
     private double totalDistance = 0;
 
@@ -63,19 +61,15 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
             this.updatedGpsLocationDescriptor = new GpsLocationDescriptor();
 
-
             this.wayPointList=GPX.read(GPX_FILE_NAME).wayPoints().collect(Collectors.toList());
 
-
             logger.info("GPX File WayPoints correctly loaded into the list. List size: {}",wayPointList.size());
-
-            //Using a class called Iterator, we are able to go through the collection, in this case a list of Gpx WayPoints
-            this.wayPointListIterator=this.wayPointList.listIterator();
 
             periodicEventUpdate();
 
         }
         catch (Exception e){
+
             logger.error("Error during the initialization. Message: {}",e.getLocalizedMessage());
         }
     }
@@ -111,7 +105,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                     notifyUpdate(updatedGpsLocationDescriptor);
 
                     // Calculate Distance
-                    double distance = GpsUtils.distance(
+                    double distance = GpsDistance.distance(
                             newCurrentWayPoint.getLatitude(),
                             newNextWayPoint.getLatitude(),
                             newCurrentWayPoint.getLongitude(),
@@ -144,8 +138,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                     //Notify the Listener after data changing
                     notifyUpdate(updatedGpsLocationDescriptor);
-                    // --------------------------------------------------------------------------------
-
+                    // -----------------------------------------------------------------------------------------
 
                     logger.error("No more WayPoints available in the list ... Total Distance covered: {} meters",totalDistance);
 

@@ -2,6 +2,11 @@ package message;
 
 import java.util.Map;
 
+/**
+ * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
+ * @project - Smart City Car Sharing
+ */
+
 public class EventMessage extends GenericMessageStructure{
 
     public EventMessage() {

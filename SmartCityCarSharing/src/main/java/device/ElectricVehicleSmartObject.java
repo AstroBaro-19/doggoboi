@@ -14,7 +14,6 @@ import resource.GpsGpxSensorResource;
 import resource.ResourceDataListener;
 import resource.SmartObjectResource;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -54,7 +53,7 @@ public class ElectricVehicleSmartObject {
     }
 
     /**
-     * Initializing the Smart Object: Id, MqttClient, List of resources
+     * Initializing the Smart Object: {vehicleId, MqttClient, Map of resources K-V}
      * Notes:
      * -> Map<String, SmartObjectResource> resourceMap --> we use the Resource List
      * -> Every class that extends SmartObjectResource (abstract) can be added
