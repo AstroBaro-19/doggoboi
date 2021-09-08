@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jenetics.jpx.WayPoint;
 import message.TelemetryMessage;
 import model.GpsLocationDescriptor;
 import resource.GpsGpxSensorResource;
@@ -11,8 +12,10 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.GpsDistance;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Gps Monitoring
@@ -36,9 +39,18 @@ public class GpsMonitoringConsumer {
 
     private static ObjectMapper mapper;
 
+    private static ArrayList<GpsLocationDescriptor> gpsLocationDescriptorArrayList =new ArrayList<>();
+    private static ListIterator<GpsLocationDescriptor> gpsLocationDescriptorListIterator=null;
+
+    private static int i=0;
+    private static double totalDistance=0;
+
+
+
     public static void main(String [ ] args) {
 
     	logger.info("MQTT Consumer Tester Started ...");
+
 
         try{
 
@@ -86,7 +98,40 @@ public class GpsMonitoringConsumer {
 
                     GpsLocationDescriptor gpsLocationDescriptor = telemetryMessageOptional.get().getDataValue();
 
-                    logger.info("New Gps Telemetry Data Received ! Data: {}", gpsLocationDescriptor);
+                    logger.info("New Gps Telemetry Data Received ! Data: {}",gpsLocationDescriptor);
+
+
+                    gpsLocationDescriptorArrayList.add(gpsLocationDescriptor);
+
+                    logger.info("CurrentPoint: {}",gpsLocationDescriptor);
+                    logger.info("PointforCalc-> Lat: {} - Long: {}",gpsLocationDescriptorArrayList.get(i).getLatitude(),gpsLocationDescriptorArrayList.get(i).getLongitude());
+
+                    try {
+                        if (gpsLocationDescriptorArrayList.size()>1){
+
+                            double distance = GpsDistance.distancePath(
+                                    gpsLocationDescriptor.getLatitude(),
+                                    gpsLocationDescriptorArrayList.get(i).getLatitude(),
+                                    gpsLocationDescriptor.getLongitude(),
+                                    gpsLocationDescriptorArrayList.get(i).getLongitude(),
+                                    gpsLocationDescriptor.getElevation(),
+                                    gpsLocationDescriptorArrayList.get(i).getElevation()
+                            );
+                            totalDistance += distance;
+
+                            logger.info("Updating Total Distance: {} meters", totalDistance);
+
+                            i++;
+                        }
+                        else {
+                            logger.info("Waiting for new Gps Waypoints ...");
+                        }
+
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
 
                 }
             });
