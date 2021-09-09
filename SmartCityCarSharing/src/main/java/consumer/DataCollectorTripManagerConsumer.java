@@ -121,23 +121,25 @@ public class DataCollectorTripManagerConsumer {
                          * Updating the Battery level consumption using the updated values constantly received by the consumer
                          */
                         try {
-                            if (batteryLevelList.size()>1){
+                            if (batteryLevelList.size() > 1) {
                                 double consumption = GpsConsumption.consumptionCalc(
                                         batteryLevelList.get(j),
                                         newBatteryLevel
-
                                 );
 
                                 totalConsumption += consumption;
 
-                                logger.info("Updating Battery Consumption: {} %",totalConsumption);
+                                logger.info("Updating Battery Consumption: {} %", totalConsumption);
 
                                 j++;
-                            }
-                            else{
+
+                            } else {
                                 logger.info("Waiting for new Battery Level Value updates ...");
                             }
 
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 
                         //If is the first value
                         if(!batteryHistoryMap.containsKey(topic) || newBatteryLevel > batteryHistoryMap.get(topic)){
