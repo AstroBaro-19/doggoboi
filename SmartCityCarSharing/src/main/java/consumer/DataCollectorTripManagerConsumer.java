@@ -108,6 +108,30 @@ public class DataCollectorTripManagerConsumer {
                         Double newBatteryLevel = (Double) telemetryMessageOptional.get().getDataValue();
                         logger.info("New Battery Telemetry Data Received ! Battery Level: {}", newBatteryLevel);
 
+                        batteryLevelList.add(newBatteryLevel);
+
+                        /**
+                         * Updating the Battery level consumption using the updated values constantly received by the consumer
+                         */
+                        try {
+                            if (batteryLevelList.size()>1){
+                                double consumption = GpsConsumption.consumptionCalc(
+                                        batteryLevelList.get(j),
+                                        newBatteryLevel
+
+                                );
+
+                                totalConsumption += consumption;
+
+                                logger.info("Updating Battery Consumption: {} %",totalConsumption);
+
+                                j++;
+                            }
+                            else{
+                                logger.info("Waiting for new Battery Level Value updates ...");
+                            }
+
+
                         //If is the first value
                         if(!batteryHistoryMap.containsKey(topic) || newBatteryLevel > batteryHistoryMap.get(topic)){
                             logger.info("New Battery Level Saved for: {}", topic);
