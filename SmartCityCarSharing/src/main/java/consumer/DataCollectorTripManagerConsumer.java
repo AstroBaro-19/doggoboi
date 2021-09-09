@@ -45,6 +45,12 @@ public class DataCollectorTripManagerConsumer {
 
     private static final String ALARM_MESSAGE_CONTROL_TYPE = "battery_alarm_message";
 
+    private static ArrayList<Double> batteryLevelList =new ArrayList<>();
+
+    private static double totalConsumption=0;
+
+    private static int j=0;
+
     private static ObjectMapper mapperBattery;
 
     private static boolean isAlarmNotified = false;
