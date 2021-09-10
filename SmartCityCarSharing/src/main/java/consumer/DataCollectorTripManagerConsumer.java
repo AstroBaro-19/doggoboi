@@ -54,6 +54,11 @@ public class DataCollectorTripManagerConsumer {
     private static ObjectMapper mapperBattery;
 
     private static boolean isAlarmNotified = false;
+
+    private static double batteryCapacity = 0.5; //KWh
+
+    private static double consumption_Kwh;
+
     //----------------------------------------------------------------------------
 
     public static void main(String [ ] args) {
@@ -137,6 +142,12 @@ public class DataCollectorTripManagerConsumer {
                                 logger.info("Waiting for new Battery Level Value updates ...");
                             }
 
+                            //-------------------------------------------------------
+                            logger.info("consumo: {} - capacità: {} - distanza: {}",totalConsumption,batteryCapacity,totalDistance);
+                            consumption_Kwh = (totalConsumption*batteryCapacity)/(100*totalDistance);
+                            logger.info("Relationship: {} Kwh/Km",consumption_Kwh);
+
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -190,9 +201,10 @@ public class DataCollectorTripManagerConsumer {
                                         gpsLocationDescriptor.getElevation(),
                                         gpsLocationDescriptorArrayList.get(i).getElevation()
                                 );
+
                                 totalDistance += distance;
 
-                                logger.info("Updating Total Distance: {} meters", totalDistance);
+                                logger.info("Updating Total Distance: {} Km", totalDistance);
 
                                 i++;
                             }

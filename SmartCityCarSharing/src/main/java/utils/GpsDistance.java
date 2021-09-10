@@ -48,11 +48,12 @@ public class GpsDistance {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         double distance = R * c * 1000; // convert to meters
 
+
         double height = elevation1 - elevation2;
 
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
-        return Math.sqrt(distance);
+        return Math.sqrt(distance)/1000;
     }
 
 
