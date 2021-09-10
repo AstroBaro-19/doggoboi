@@ -118,6 +118,7 @@ public class DataCollectorTripManagerConsumer {
                     if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(BatterySensorResource.RESOURCE_TYPE)) {
 
                         Double newBatteryLevel = (Double) telemetryMessageOptional.get().getDataValue();
+
                         logger.info("New Battery Telemetry Data Received ! Battery Level: {}", newBatteryLevel);
 
                         batteryLevelList.add(newBatteryLevel);
