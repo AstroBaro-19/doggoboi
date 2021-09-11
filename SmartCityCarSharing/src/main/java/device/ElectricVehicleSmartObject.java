@@ -2,6 +2,7 @@ package device;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import consumer.DataCollectorTripManagerConsumer;
 import message.TelemetryMessage;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -79,7 +80,7 @@ public class ElectricVehicleSmartObject {
 
             if (this.mqttClient.isConnected() &&
                     this.vehicleId!=null && this.vehicleId.length()>0 &&
-                    this.resourceMap!=null && this.resourceMap.size()>0){
+                    this.resourceMap!=null && this.resourceMap.size()>0 && DataCollectorTripManagerConsumer.isPathFinished==false){
 
                 logger.info("Starting the vehicle emulation...");
 
@@ -112,8 +113,11 @@ public class ElectricVehicleSmartObject {
                             smartObjectResource.getType().equals(BatterySensorResource.RESOURCE_TYPE)){
                             smartObjectResource.addDataListener(new ResourceDataListener() {
                                 @Override
-                                public void onDataChange(ResourceDataListener resource, Object updatedValue) {
-
+                                public void onDataChange(ResourceDataListener resource, Object updatedValue) throws MqttException {
+                                    if (DataCollectorTripManagerConsumer.isPathFinished==true){
+                                        mqttClient.disconnectForcibly();
+                                        mqttClient.close();
+                                    }
                                     String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
 
                                     try {

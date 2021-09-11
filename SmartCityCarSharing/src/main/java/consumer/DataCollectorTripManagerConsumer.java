@@ -12,12 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import resource.BatterySensorResource;
 import resource.GpsGpxSensorResource;
+import resource.SmartObjectResource;
 import utils.GpsConsumption;
 import utils.GpsDistance;
 
 import java.util.*;
 
-public class DataCollectorTripManagerConsumer {
+public class DataCollectorTripManagerConsumer{
 
     private final static Logger logger = LoggerFactory.getLogger(DataCollectorTripManagerConsumer.class);
 
@@ -29,6 +30,12 @@ public class DataCollectorTripManagerConsumer {
 
     //E.g. fleet/vehicle/e0c7433d-8457-4a6b-8084-595d500076cc/telemetry/#
     private static final String TARGET_TOPIC = "single/vehicle/+/telemetry/#";
+
+    private static final String GPS_TARGET_TOPIC = "single/vehicle/+/telemetry/gps";
+
+    private static final String BATTERY_TARGET_TOPIC = "single/vehicle/+/telemetry/battery";
+
+
 
     //------------------------------------------------------------------------
     private static ObjectMapper mapperGps;
@@ -58,6 +65,8 @@ public class DataCollectorTripManagerConsumer {
     private static double batteryCapacity = 0.5; //KWh
 
     private static double consumption_Kwh;
+
+    public static boolean isPathFinished=false;
 
     //----------------------------------------------------------------------------
 
@@ -93,6 +102,7 @@ public class DataCollectorTripManagerConsumer {
             //Connect to the target broker
             client.connect(options);
 
+
             logger.info("Connected ! Client Id: {}", clientId);
 
             Map<String, Double> batteryHistoryMap = new HashMap<>();
@@ -116,6 +126,16 @@ public class DataCollectorTripManagerConsumer {
 
                 try {
                     if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(BatterySensorResource.RESOURCE_TYPE)) {
+
+                        //if-true
+                        logger.info("Path finished battery: {}",isPathFinished);
+                        if (isPathFinished==true){
+                            logger.info("Unsubscribing from - iot:sensor:battery");
+                            client.unsubscribe(BATTERY_TARGET_TOPIC);
+                            client.disconnectForcibly();
+                            client.close();
+
+                        }
 
                         Double newBatteryLevel = (Double) telemetryMessageOptional.get().getDataValue();
 
@@ -212,6 +232,17 @@ public class DataCollectorTripManagerConsumer {
                             else {
                                 logger.info("Waiting for new Gps Waypoints ...");
                             }
+
+                            logger.info("GpsList: {} - WayPointList: {}",gpsLocationDescriptorArrayList.size(),GpsGpxSensorResource.wayPointListSize.size());
+                            if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
+                                logger.info("End of the list ...");
+                                isPathFinished = true;
+                                logger.info("PathFinished: {}",isPathFinished);
+                                logger.info("Unsubscribing from - iot:sensor:gps");
+                                client.unsubscribe(GPS_TARGET_TOPIC);
+
+                            }
+
 
                         }catch (Exception e){
                             e.printStackTrace();

@@ -124,6 +124,7 @@ public class GpsMonitoringConsumer {
                             logger.info("Waiting for new Gps Waypoints for distance calculation ...");
                         }
 
+
                     }catch (Exception e){
                         e.printStackTrace();
                     }

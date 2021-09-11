@@ -1,5 +1,6 @@
 package resource;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,8 +48,13 @@ public abstract class SmartObjectResource<T> {
     protected void notifyUpdate(T updatedValue){
         if(this.resourceListenerList != null && this.resourceListenerList.size() > 0)
             this.resourceListenerList.forEach(resourceDataListener -> {
-                if(resourceDataListener != null)
-                    resourceDataListener.onDataChange(resourceDataListener, updatedValue);
+                if(resourceDataListener != null) {
+                    try {
+                        resourceDataListener.onDataChange(resourceDataListener, updatedValue);
+                    } catch (MqttException e) {
+                        e.printStackTrace();
+                    }
+                }
                     //TODO - chidere consiglio ai boys, errore su parametro resourceDataListener
             });
         else

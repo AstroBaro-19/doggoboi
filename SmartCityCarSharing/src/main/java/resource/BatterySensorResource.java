@@ -1,6 +1,7 @@
 package resource;
 
 
+import consumer.DataCollectorTripManagerConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,11 +86,17 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
         this.updateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
-                //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
+                logger.info("Path alarm battery resource: {}",DataCollectorTripManagerConsumer.isPathFinished);
+                if (!DataCollectorTripManagerConsumer.isPathFinished){
+                    updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
+                    //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
 
-                //Notify the Listener after data changing
-                notifyUpdate(updatedBatteryLevel);
+                    //Notify the Listener after data changing
+                    notifyUpdate(updatedBatteryLevel);
+                }else {
+                    updateTimer.cancel();
+                }
+
 
             }
         }, TASK_DELAY_TIME, UPDATE_PERIOD);
