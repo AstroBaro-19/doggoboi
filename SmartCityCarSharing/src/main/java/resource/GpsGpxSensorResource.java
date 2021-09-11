@@ -101,17 +101,10 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                 }
                 else {
-
-                    updateTimer.cancel();
-                    logger.info("No more WayPoints available ...");
-
-                    /**
-                     * logger.info("Reversing WayPoint List ...");
-                     * Collections.reverse(wayPointList);
-                     * wayPointListIterator = wayPointList.listIterator();
-                     * logger.info("Iterating backward on the GPS Waypoint List ...");
-                     */
-
+                     logger.info("Reversing WayPoint List ...");
+                     Collections.reverse(wayPointList);
+                     wayPointListIterator = wayPointList.listIterator();
+                     logger.info("Iterating backward on the GPS Waypoint List ...");
                 }
 
 
