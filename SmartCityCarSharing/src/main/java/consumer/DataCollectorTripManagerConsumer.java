@@ -134,7 +134,7 @@ public class DataCollectorTripManagerConsumer {
 
                                 totalConsumption += consumption;
 
-                                logger.info("Updating Battery Consumption: {} %", totalConsumption);
+                                //logger.info("Updating Battery Consumption: {} %", totalConsumption);
 
                                 j++;
 
@@ -142,10 +142,15 @@ public class DataCollectorTripManagerConsumer {
                                 logger.info("Waiting for new Battery Level Value updates ...");
                             }
 
-                            //-------------------------------------------------------
-                            logger.info("consumo: {} - capacità: {} - distanza: {}",totalConsumption,batteryCapacity,totalDistance);
                             consumption_Kwh = (totalConsumption*batteryCapacity)/(100*totalDistance);
-                            logger.info("Relationship: {} Kwh/Km",consumption_Kwh);
+                            //TODO - implement new Java class?
+
+                            logger.info("Consumption: {} % - BatteryCapacity: {} Kwh - TotalDistance Covered: {} Km - Consumption: {} Kwh/Km",
+                                    totalConsumption,
+                                    batteryCapacity,
+                                    totalDistance,
+                                    consumption_Kwh);
+
 
 
                         } catch (Exception e) {
@@ -206,7 +211,7 @@ public class DataCollectorTripManagerConsumer {
 
                                 totalDistance += distance;
 
-                                logger.info("Updating Total Distance: {} Km", totalDistance);
+                                //logger.info("Updating Total Distance: {} Km", totalDistance);
 
                                 i++;
                             }
