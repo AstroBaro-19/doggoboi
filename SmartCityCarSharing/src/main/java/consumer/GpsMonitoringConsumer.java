@@ -116,12 +116,12 @@ public class GpsMonitoringConsumer {
                             );
                             totalDistance += distance;
 
-                            logger.info("Updating Total Distance: {} meters", totalDistance);
+                            logger.info("Updating Total Distance: {} Km", totalDistance);
 
                             i++;
                         }
                         else {
-                            logger.info("Waiting for new Gps Waypoints ...");
+                            logger.info("Waiting for new Gps Waypoints for distance calculation ...");
                         }
 
                     }catch (Exception e){

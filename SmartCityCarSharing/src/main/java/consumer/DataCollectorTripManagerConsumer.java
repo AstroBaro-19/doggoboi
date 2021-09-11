@@ -144,7 +144,7 @@ public class DataCollectorTripManagerConsumer {
                             }
 
                             //-------------------------------------------------------
-                            logger.info("consumo: {} - capacità: {} - distanza: {}",totalConsumption,batteryCapacity,totalDistance);
+                            //logger.info("consumo: {} - capacità: {} - distanza: {}",totalConsumption,batteryCapacity,totalDistance);
                             consumption_Kwh = (totalConsumption*batteryCapacity)/(100*totalDistance);
                             logger.info("Relationship: {} Kwh/Km",consumption_Kwh);
 
