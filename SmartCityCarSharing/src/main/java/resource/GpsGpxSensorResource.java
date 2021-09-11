@@ -4,7 +4,6 @@ import io.jenetics.jpx.*;
 import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.GpsDistance;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,15 +23,15 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private static final long TASK_DELAY_TIME = 5000; //Seconds before starting the periodic update task
 
-    private static final String GPX_FILE_NAME="tracks/Mantova.gpx";
+    private static final String GPX_FILE_NAME="tracks/Milan_Cathedral.gpx";
 
     private GpsLocationDescriptor updatedGpsLocationDescriptor= null;
 
     private Timer updateTimer = null;
 
-    private List<WayPoint> wayPointList= null;
+    public static List<WayPoint> wayPointList=null;
 
-    private ListIterator<WayPoint> wayPointListIterator;
+    public static ListIterator<WayPoint> wayPointListIterator;
 
 
 
