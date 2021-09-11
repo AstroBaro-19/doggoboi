@@ -4,6 +4,8 @@ import io.jenetics.jpx.*;
 import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,10 +31,9 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private Timer updateTimer = null;
 
-    public static List<WayPoint> wayPointList=null;
+    private static List<WayPoint> wayPointList=null;
 
-    public static ListIterator<WayPoint> wayPointListIterator;
-
+    private static ListIterator<WayPoint> wayPointListIterator;
 
 
     // Constructors
@@ -100,8 +101,17 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                 }
                 else {
+
                     updateTimer.cancel();
                     logger.info("No more WayPoints available ...");
+
+                    /**
+                     * logger.info("Reversing WayPoint List ...");
+                     * Collections.reverse(wayPointList);
+                     * wayPointListIterator = wayPointList.listIterator();
+                     * logger.info("Iterating backward on the GPS Waypoint List ...");
+                     */
+
                 }
 
 

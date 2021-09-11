@@ -109,7 +109,6 @@ public class DataCollectorTripManagerConsumer {
 
                 //logger.info("Received Data (Topic: {}) -> Data: {}", topic, new String(msg.getPayload()));
 
-
                 //De-serialization
                 Optional<TelemetryMessage<Object>> telemetryMessageOptional = parseTelemetryMessagePayload(msg);
 
@@ -172,6 +171,8 @@ public class DataCollectorTripManagerConsumer {
                                         put("car_parking_id", "freepark-001");
                                         put("car_parking_lat", 44.79454615000001);
                                         put("car_parking_lng", 10.3359437);
+
+                                        //TODO - calculate distance point-to-point
                                     }
                                 }));
                             }
@@ -230,7 +231,8 @@ public class DataCollectorTripManagerConsumer {
         }
 
         catch (Exception e){
-            e.printStackTrace();}
+            e.printStackTrace();
+        }
     }
 
 

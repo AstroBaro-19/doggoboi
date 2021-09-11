@@ -1,13 +1,7 @@
 package utils;
 
-import io.jenetics.jpx.Latitude;
-import io.jenetics.jpx.Length;
-import io.jenetics.jpx.Longitude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import java.util.Optional;
 
 /**
  * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
