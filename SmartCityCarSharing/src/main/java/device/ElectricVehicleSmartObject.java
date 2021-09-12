@@ -2,6 +2,7 @@ package device;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import consumer.DataCollectorTripManagerConsumer;
 import message.TelemetryMessage;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -112,17 +113,25 @@ public class ElectricVehicleSmartObject {
                             smartObjectResource.getType().equals(BatterySensorResource.RESOURCE_TYPE)){
                             smartObjectResource.addDataListener(new ResourceDataListener() {
                                 @Override
-                                public void onDataChange(ResourceDataListener resource, Object updatedValue) {
+                                public void onDataChange(ResourceDataListener resource, Object updatedValue) throws MqttException {
 
-                                    String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
+                                    if (!DataCollectorTripManagerConsumer.isPathFinished){
+                                        String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
 
-                                    try {
-                                        publishTelemetryData(topic, new TelemetryMessage(smartObjectResource.getType(),updatedValue));
-                                    } catch (MqttException e) {
-                                        e.printStackTrace();
-                                    } catch (JsonProcessingException e) {
-                                        e.printStackTrace();
+                                        try {
+                                            publishTelemetryData(topic, new TelemetryMessage(smartObjectResource.getType(),updatedValue));
+                                        } catch (MqttException e) {
+                                            e.printStackTrace();
+                                        } catch (JsonProcessingException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
+                                    else {
+                                        mqttClient.disconnectForcibly();
+                                        mqttClient.close();
+
+                                    }
+
                                 }
                             });
                     }

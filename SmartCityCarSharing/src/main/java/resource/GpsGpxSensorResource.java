@@ -1,5 +1,6 @@
 package resource;
 
+import consumer.DataCollectorTripManagerConsumer;
 import io.jenetics.jpx.*;
 import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
@@ -32,6 +33,16 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
     private Timer updateTimer = null;
 
     private static List<WayPoint> wayPointList=null;
+
+    public static List<WayPoint> wayPointListSize;
+
+    static {
+        try {
+            wayPointListSize = GPX.read(GPX_FILE_NAME).wayPoints().collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static ListIterator<WayPoint> wayPointListIterator;
 
@@ -101,10 +112,14 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                 }
                 else {
-                     logger.info("Reversing WayPoint List ...");
-                     Collections.reverse(wayPointList);
-                     wayPointListIterator = wayPointList.listIterator();
-                     logger.info("Iterating backward on the GPS Waypoint List ...");
+                    DataCollectorTripManagerConsumer.isPathFinished=true;
+                    updateTimer.cancel();
+                    /**
+                     * logger.info("Reversing WayPoint List ...");
+                     *                     Collections.reverse(wayPointList);
+                     *                     wayPointListIterator = wayPointList.listIterator();
+                     *                     logger.info("Iterating backward on the GPS Waypoint List ...");
+                     */
                 }
 
 
