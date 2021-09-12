@@ -113,6 +113,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                 }
                 else {
                     DataCollectorTripManagerConsumer.isPathFinished=true;
+
                     updateTimer.cancel();
                     /**
                      * logger.info("Reversing WayPoint List ...");

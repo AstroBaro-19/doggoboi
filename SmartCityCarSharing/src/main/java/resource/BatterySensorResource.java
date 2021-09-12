@@ -95,6 +95,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
                 }
                 else {
                     updateTimer.cancel();
+
                 }
 
 

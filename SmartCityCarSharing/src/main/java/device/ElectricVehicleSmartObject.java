@@ -127,8 +127,9 @@ public class ElectricVehicleSmartObject {
                                         }
                                     }
                                     else {
-                                        mqttClient.disconnectForcibly();
+                                        mqttClient.disconnect();
                                         mqttClient.close();
+
 
                                     }
 

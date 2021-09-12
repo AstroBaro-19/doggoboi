@@ -225,8 +225,21 @@ public class DataCollectorTripManagerConsumer {
                             if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
                                 //TODO - PRETTY STAMP on monitor
                                 logger.info("Path is finished.");
-
                                 isPathFinished=true;
+
+                                //STAMP:
+                                logger.info("SUMMARY:\n" +
+                                        "-> Consumption: {} % \n" +
+                                        "-> BatteryCapacity: {} Kwh \n" +
+                                        "-> TotalDistance Covered: {} Km \n" +
+                                        "-> Consumption: {} Kwh/Km",
+                                        totalConsumption,
+                                        batteryCapacity,
+                                        totalDistance,
+                                        consumption_Kwh);
+
+                                //TODO - MANDARLO CON UN CONTROL MESSAGE???
+
                             }
 
                         }catch (Exception e){
