@@ -151,10 +151,18 @@ public class DataCollectorTripManagerConsumer{
                                 logger.info("Waiting for new Battery Level Value updates ...");
                             }
 
-                            //-------------------------------------------------------
-                            //logger.info("consumo: {} - capacità: {} - distanza: {}",totalConsumption,batteryCapacity,totalDistance);
-                            consumption_Kwh = (totalConsumption*batteryCapacity)/(100*totalDistance);
-                            logger.info("Relationship: {} Kwh/Km",consumption_Kwh);
+                            consumption_Kwh = GpsConsumption.consumptionKwh(
+                                    totalConsumption,
+                                    batteryCapacity,
+                                    totalDistance
+                            );
+
+
+                            logger.info("Consumption: {} % - BatteryCapacity: {} Kwh - TotalDistance Covered: {} Km - Consumption: {} Kwh/Km",
+                                    totalConsumption,
+                                    batteryCapacity,
+                                    totalDistance,
+                                    consumption_Kwh);
 
 
                         } catch (Exception e) {
