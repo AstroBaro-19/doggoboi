@@ -65,6 +65,7 @@ public class DataCollectorTripManagerConsumer {
 
     public static boolean isPathFinished;
 
+
     //----------------------------------------------------------------------------
 
     public static void main(String [ ] args) {
@@ -106,7 +107,8 @@ public class DataCollectorTripManagerConsumer {
             mapperGps = new ObjectMapper();
             mapperBattery = new ObjectMapper();
 
-            isPathFinished=false;
+            isPathFinished = false;
+
 
             //Subscribe to the target topic #. In that case the consumer will receive (if authorized) all the message
             //passing through the broker
@@ -149,7 +151,7 @@ public class DataCollectorTripManagerConsumer {
                                 logger.info("Waiting for new Battery Level Value updates ...");
                             }
 
-                            double consumption_Kwh= GpsConsumption.consumptionKwh(
+                            consumption_Kwh = GpsConsumption.consumptionKwh(
                                     totalConsumption,
                                     batteryCapacity,
                                     totalDistance
@@ -230,6 +232,7 @@ public class DataCollectorTripManagerConsumer {
                                 logger.info("Waiting for new Gps Waypoints ...");
                             }
 
+
                             if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
                                 //TODO - PRETTY STAMP on monitor
                                 //logger.info("Path is finished.");
@@ -244,7 +247,7 @@ public class DataCollectorTripManagerConsumer {
                                     }
                                 }));
 
-                                //isPathFinished=true;
+                                //isPathFinished = true;
 
 
                             }

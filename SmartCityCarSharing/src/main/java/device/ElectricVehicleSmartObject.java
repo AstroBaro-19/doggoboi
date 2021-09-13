@@ -126,15 +126,9 @@ public class ElectricVehicleSmartObject {
                                             e.printStackTrace();
                                         }
                                     }
-                                    else {
-
-                                        mqttClient.disconnect();
-
-                                    }
                                 }
                             });
                     }
-
 
                 }
 

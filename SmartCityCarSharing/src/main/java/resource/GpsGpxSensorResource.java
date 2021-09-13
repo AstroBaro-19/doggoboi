@@ -36,6 +36,9 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     public static List<WayPoint> wayPointListSize;
 
+    public static boolean pathFinished;
+
+
     static {
         try {
             wayPointListSize = GPX.read(GPX_FILE_NAME).wayPoints().collect(Collectors.toList());
@@ -66,6 +69,8 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
      */
     private void init() {
         try {
+
+            pathFinished=false;
 
             this.updatedGpsLocationDescriptor = new GpsLocationDescriptor();
 
@@ -112,7 +117,8 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                 }
                 else {
-                    DataCollectorTripManagerConsumer.isPathFinished=true;
+                    DataCollectorTripManagerConsumer.isPathFinished = true;
+                    pathFinished = true;
 
                     updateTimer.cancel();
                     /**
