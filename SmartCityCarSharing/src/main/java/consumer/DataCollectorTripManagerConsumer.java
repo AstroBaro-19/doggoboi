@@ -66,8 +66,6 @@ public class DataCollectorTripManagerConsumer{
 
     private static double consumption_Kwh;
 
-    public static boolean isPathFinished=false;
-
     //----------------------------------------------------------------------------
 
     public static void main(String [ ] args) {
@@ -126,16 +124,6 @@ public class DataCollectorTripManagerConsumer{
 
                 try {
                     if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(BatterySensorResource.RESOURCE_TYPE)) {
-
-                        //if-true
-                        logger.info("Path finished battery: {}",isPathFinished);
-                        if (isPathFinished==true){
-                            logger.info("Unsubscribing from - iot:sensor:battery");
-                            client.unsubscribe(BATTERY_TARGET_TOPIC);
-                            client.disconnectForcibly();
-                            client.close();
-
-                        }
 
                         Double newBatteryLevel = (Double) telemetryMessageOptional.get().getDataValue();
 
@@ -231,16 +219,6 @@ public class DataCollectorTripManagerConsumer{
                             }
                             else {
                                 logger.info("Waiting for new Gps Waypoints ...");
-                            }
-
-                            logger.info("GpsList: {} - WayPointList: {}",gpsLocationDescriptorArrayList.size(),GpsGpxSensorResource.wayPointListSize.size());
-                            if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
-                                logger.info("End of the list ...");
-                                isPathFinished = true;
-                                logger.info("PathFinished: {}",isPathFinished);
-                                logger.info("Unsubscribing from - iot:sensor:gps");
-                                client.unsubscribe(GPS_TARGET_TOPIC);
-
                             }
 
 

@@ -113,15 +113,12 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                     notifyUpdate(updatedGpsLocationDescriptor);
 
                 }
-                /**
-                 * logger.info("Reversing WayPoint List ...");
-                 *                     Collections.reverse(wayPointList);
-                 *                     wayPointListIterator = wayPointList.listIterator();
-                 *                     logger.info("Iterating backward on the GPS Waypoint List ...");
-                 */
+
                 else{
-                    logger.info("Lista finita ...");
-                    updateTimer.cancel();
+                    logger.info("Reversing WayPoint List ...");
+                    Collections.reverse(wayPointList);
+                    wayPointListIterator = wayPointList.listIterator();
+                    logger.info("Iterating backward on the GPS Waypoint List ...");
                 }
 
 

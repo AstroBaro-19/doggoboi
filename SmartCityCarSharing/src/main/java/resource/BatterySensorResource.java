@@ -86,17 +86,12 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
         this.updateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                logger.info("Path alarm battery resource: {}",DataCollectorTripManagerConsumer.isPathFinished);
-                if (!DataCollectorTripManagerConsumer.isPathFinished){
-                    updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
-                    //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
 
-                    //Notify the Listener after data changing
-                    notifyUpdate(updatedBatteryLevel);
-                }else {
-                    updateTimer.cancel();
-                }
+                updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
+                //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
 
+                //Notify the Listener after data changing
+                notifyUpdate(updatedBatteryLevel);
 
             }
         }, TASK_DELAY_TIME, UPDATE_PERIOD);
