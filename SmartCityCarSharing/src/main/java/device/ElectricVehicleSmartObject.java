@@ -115,17 +115,16 @@ public class ElectricVehicleSmartObject {
                                 @Override
                                 public void onDataChange(ResourceDataListener resource, Object updatedValue) throws MqttException {
 
-                                    if (!DataCollectorTripManagerConsumer.isPathFinished){
-                                        String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
+                                    String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
 
-                                        try {
-                                            publishTelemetryData(topic, new TelemetryMessage(smartObjectResource.getType(),updatedValue));
-                                        } catch (MqttException e) {
-                                            e.printStackTrace();
-                                        } catch (JsonProcessingException e) {
-                                            e.printStackTrace();
-                                        }
+                                    try {
+                                        publishTelemetryData(topic, new TelemetryMessage(smartObjectResource.getType(),updatedValue));
+                                    } catch (MqttException e) {
+                                        e.printStackTrace();
+                                    } catch (JsonProcessingException e) {
+                                        e.printStackTrace();
                                     }
+
                                 }
                             });
                     }

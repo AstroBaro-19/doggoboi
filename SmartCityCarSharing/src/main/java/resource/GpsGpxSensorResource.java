@@ -36,8 +36,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     public static List<WayPoint> wayPointListSize;
 
-    public static boolean pathFinished;
-
 
     static {
         try {
@@ -69,8 +67,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
      */
     private void init() {
         try {
-
-            pathFinished=false;
 
             this.updatedGpsLocationDescriptor = new GpsLocationDescriptor();
 
@@ -118,9 +114,9 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                 }
                 else {
                     DataCollectorTripManagerConsumer.isPathFinished = true;
-                    pathFinished = true;
 
                     updateTimer.cancel();
+
                     /**
                      * logger.info("Reversing WayPoint List ...");
                      *                     Collections.reverse(wayPointList);

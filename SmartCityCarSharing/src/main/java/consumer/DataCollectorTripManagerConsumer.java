@@ -199,7 +199,7 @@ public class DataCollectorTripManagerConsumer {
                     }
 
 
-                    else if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(GpsGpxSensorResource.RESOURCE_TYPE)) {
+                    if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(GpsGpxSensorResource.RESOURCE_TYPE)) {
                         GpsLocationDescriptor gpsLocationDescriptor = (GpsLocationDescriptor) telemetryMessageOptional.get().getDataValue();
                         logger.info("New Gps Telemetry Data Received ! Data: {}", gpsLocationDescriptor);
 
@@ -232,31 +232,22 @@ public class DataCollectorTripManagerConsumer {
                                 logger.info("Waiting for new Gps Waypoints ...");
                             }
 
+                            String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
 
-                            if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
-                                //TODO - PRETTY STAMP on monitor
-                                //logger.info("Path is finished.");
-
-                                String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
-
-                                publishControlMessageSummary(client, controlTopic, new ControlMessageSummary(SUMMARY_TYPE, new HashMap<>(){
-                                    {
-                                        put("ConsumptionBattery (%)", totalConsumption);
-                                        put("TotalDistance Covered (Km)", totalDistance);
-                                        put("Consumption (Kwh/Km)", consumption_Kwh);
-                                    }
-                                }));
-
-                                //isPathFinished = true;
+                            publishControlMessageSummary(client, controlTopic, new ControlMessageSummary(SUMMARY_TYPE, new HashMap<>(){
+                                {
+                                    put("ConsumptionBattery (%)", totalConsumption);
+                                    put("TotalDistance Covered (Km)", totalDistance);
+                                    put("Consumption (Kwh/Km)", consumption_Kwh);
+                                }
+                            }));
 
 
-                            }
 
                         }catch (Exception e){
                             e.printStackTrace();
                         }
                     }
-
 
 
                 }catch (Exception e){
@@ -265,6 +256,7 @@ public class DataCollectorTripManagerConsumer {
 
 
             });
+
 
         }
 

@@ -63,13 +63,6 @@ public class ElectricVehicleSmartObjectProcess {
 
             electricVehicleSmartObject.start();
 
-            if (DataCollectorTripManagerConsumer.isPathFinished){
-                mqttClient.disconnect();
-                mqttClient.close();
-            }
-
-
-
 
 
         }catch (Exception e){
