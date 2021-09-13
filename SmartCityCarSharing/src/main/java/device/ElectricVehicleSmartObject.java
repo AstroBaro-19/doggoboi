@@ -113,7 +113,7 @@ public class ElectricVehicleSmartObject {
                             smartObjectResource.getType().equals(BatterySensorResource.RESOURCE_TYPE)){
                             smartObjectResource.addDataListener(new ResourceDataListener() {
                                 @Override
-                                public void onDataChange(ResourceDataListener resource, Object updatedValue) throws MqttException {
+                                public void onDataChange(ResourceDataListener resource, Object updatedValue) {
 
                                     String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
 

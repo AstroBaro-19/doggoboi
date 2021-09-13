@@ -3,6 +3,8 @@ package consumer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.WayPoint;
 import message.ControlMessage;
 import message.ControlMessageSummary;
 import message.TelemetryMessage;
@@ -17,6 +19,7 @@ import utils.GpsConsumption;
 import utils.GpsDistance;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataCollectorTripManagerConsumer {
 
@@ -30,6 +33,14 @@ public class DataCollectorTripManagerConsumer {
 
     //E.g. fleet/vehicle/e0c7433d-8457-4a6b-8084-595d500076cc/telemetry/#
     private static final String TARGET_TOPIC = "single/vehicle/+/telemetry/#";
+
+    private static final String GPX_FILE_PARKING="tracks/ParkList.gpx";
+
+    public static List<WayPoint> parkingPointList=null;
+
+    public static List<WayPoint> distanceParkingPointList=null;
+
+
 
     //------------------------------------------------------------------------
     private static ObjectMapper mapperGps;
@@ -64,6 +75,10 @@ public class DataCollectorTripManagerConsumer {
     private static double consumption_Kwh;
 
     public static boolean isPathFinished;
+
+    private static double distanceParkPoint;
+
+    private static double distanceCurrentPark;
 
 
     //----------------------------------------------------------------------------
@@ -108,6 +123,11 @@ public class DataCollectorTripManagerConsumer {
             mapperBattery = new ObjectMapper();
 
             isPathFinished = false;
+
+            parkingPointList= GPX.read(GPX_FILE_PARKING).wayPoints().collect(Collectors.toList());
+
+            logger.info("GPX File WayPoints correctly loaded into the list. List size: {}",parkingPointList.size());
+
 
 
             //Subscribe to the target topic #. In that case the consumer will receive (if authorized) all the message
@@ -164,6 +184,8 @@ public class DataCollectorTripManagerConsumer {
                                     totalDistance,
                                     consumption_Kwh);
 
+                            //TODO - QUI CALCOLO DISTANZA LISTA???
+
 
 
                         } catch (Exception e) {
@@ -184,11 +206,15 @@ public class DataCollectorTripManagerConsumer {
 
                                 //Incoming Topic = fleet/vehicle/fa18f676-8198-4e9f-90e0-c50a5e419b94/telemetry/battery
                                 String controlTopic = String.format("%s/%s", topic.replace("/telemetry/battery", ""), CONTROL_TOPIC);
+
+
+
                                 publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>(){
                                     {
-                                        put("car_parking_id", "freepark-001");
-                                        put("car_parking_lat", 44.79454615000001);
-                                        put("car_parking_lng", 10.3359437);
+                                        //put("car_parking_id", "freepark-001");
+                                        //put("car_parking_lat", 44.79454615000001);
+                                        //put("car_parking_lng", 10.3359437);
+                                        put("Car_Parking_data",batteryHistoryMap);
 
                                         //TODO - calculate distance point-to-point
                                     }
@@ -232,15 +258,46 @@ public class DataCollectorTripManagerConsumer {
                                 logger.info("Waiting for new Gps Waypoints ...");
                             }
 
-                            String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
+                            for (WayPoint parkingPoint : parkingPointList) {
+                                distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
 
-                            publishControlMessageSummary(client, controlTopic, new ControlMessageSummary(SUMMARY_TYPE, new HashMap<>(){
-                                {
-                                    put("ConsumptionBattery (%)", totalConsumption);
-                                    put("TotalDistance Covered (Km)", totalDistance);
-                                    put("Consumption (Kwh/Km)", consumption_Kwh);
-                                }
-                            }));
+
+                                logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceCurrentPark, parkingPoint);
+
+                            }
+
+                            /**
+                             * //DISTANZA PUNTO-PUNTO (linea d'aria)
+                             *                             for (WayPoint parkingPoint : parkingPointList) {
+                             *                                 distanceParkPoint = GpsDistance.distancePark(
+                             *                                         gpsLocationDescriptor.getLatitude(),
+                             *                                         parkingPoint.getLatitude(),
+                             *                                         gpsLocationDescriptor.getLongitude(),
+                             *                                         parkingPoint.getLongitude(),
+                             *                                         gpsLocationDescriptor.getElevation(),
+                             *                                         parkingPoint.getElevation()
+                             *                                 );
+                             *
+                             *
+                             *                                 logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceParkPoint, parkingPoint);
+                             *                             }
+                             */
+
+
+
+
+                            /**
+                             * String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
+                             *
+                             *                             publishControlMessageSummary(client, controlTopic, new ControlMessageSummary(SUMMARY_TYPE, new HashMap<>(){
+                             *                                 {
+                             *                                     put("ConsumptionBattery (%)", totalConsumption);
+                             *                                     put("TotalDistance Covered (Km)", totalDistance);
+                             *                                     put("Consumption (Kwh/Km)", consumption_Kwh);
+                             *                                 }
+                             *                             }));
+                             */
+
 
 
 
