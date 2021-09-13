@@ -127,12 +127,10 @@ public class ElectricVehicleSmartObject {
                                         }
                                     }
                                     else {
-                                        mqttClient.disconnect();
-                                        mqttClient.close();
 
+                                        mqttClient.disconnect();
 
                                     }
-
                                 }
                             });
                     }

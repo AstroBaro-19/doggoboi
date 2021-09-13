@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import message.ControlMessage;
+import message.ControlMessageSummary;
 import message.TelemetryMessage;
 import model.GpsLocationDescriptor;
 import org.eclipse.paho.client.mqttv3.*;
@@ -44,6 +45,9 @@ public class DataCollectorTripManagerConsumer {
     private static final String CONTROL_TOPIC = "control";
 
     private static final String ALARM_MESSAGE_CONTROL_TYPE = "battery_alarm_message";
+
+    private static final String SUMMARY_TYPE = "summary_values_message";
+
 
     private static ArrayList<Double> batteryLevelList =new ArrayList<>();
 
@@ -130,12 +134,12 @@ public class DataCollectorTripManagerConsumer {
                          */
                         try {
                             if (batteryLevelList.size() > 1) {
-                                double consumption = GpsConsumption.consumptionCalc(
+                                double consumptionBattery = GpsConsumption.consumptionCalc(
                                         batteryLevelList.get(j),
                                         newBatteryLevel
                                 );
 
-                                totalConsumption += consumption;
+                                totalConsumption += consumptionBattery;
 
                                 //logger.info("Updating Battery Consumption: {} %", totalConsumption);
 
@@ -145,8 +149,12 @@ public class DataCollectorTripManagerConsumer {
                                 logger.info("Waiting for new Battery Level Value updates ...");
                             }
 
-                            consumption_Kwh = (totalConsumption*batteryCapacity)/(100*totalDistance);
-                            //TODO - implement new Java class?
+                            double consumption_Kwh= GpsConsumption.consumptionKwh(
+                                    totalConsumption,
+                                    batteryCapacity,
+                                    totalDistance
+                            );
+
 
                             logger.info("Consumption: {} % - BatteryCapacity: {} Kwh - TotalDistance Covered: {} Km - Consumption: {} Kwh/Km",
                                     totalConsumption,
@@ -224,21 +232,20 @@ public class DataCollectorTripManagerConsumer {
 
                             if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
                                 //TODO - PRETTY STAMP on monitor
-                                logger.info("Path is finished.");
-                                isPathFinished=true;
+                                //logger.info("Path is finished.");
 
-                                //STAMP:
-                                logger.info("SUMMARY:\n" +
-                                        "-> Consumption: {} % \n" +
-                                        "-> BatteryCapacity: {} Kwh \n" +
-                                        "-> TotalDistance Covered: {} Km \n" +
-                                        "-> Consumption: {} Kwh/Km",
-                                        totalConsumption,
-                                        batteryCapacity,
-                                        totalDistance,
-                                        consumption_Kwh);
+                                String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
 
-                                //TODO - MANDARLO CON UN CONTROL MESSAGE???
+                                publishControlMessageSummary(client, controlTopic, new ControlMessageSummary(SUMMARY_TYPE, new HashMap<>(){
+                                    {
+                                        put("ConsumptionBattery (%)", totalConsumption);
+                                        put("TotalDistance Covered (Km)", totalDistance);
+                                        put("Consumption (Kwh/Km)", consumption_Kwh);
+                                    }
+                                }));
+
+                                //isPathFinished=true;
+
 
                             }
 
@@ -326,6 +333,41 @@ public class DataCollectorTripManagerConsumer {
             }
         }).start();
     }
+
+    private static void publishControlMessageSummary(IMqttClient mqttClient, String topic, ControlMessageSummary controlMessageSummary) throws MqttException, JsonProcessingException {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try{
+
+                    logger.info("Sending to topic: {} -> Data: {}", topic, controlMessageSummary);
+
+                    if(mqttClient != null && mqttClient.isConnected() && controlMessageSummary != null && topic != null){
+
+                        String messagePayload = mapperBattery.writeValueAsString(controlMessageSummary);
+
+                        MqttMessage mqttMessage = new MqttMessage(messagePayload.getBytes());
+                        mqttMessage.setQos(0);
+
+                        mqttClient.publish(topic, mqttMessage);
+
+                        logger.info("Data Correctly Published to topic: {}", topic);
+
+                    }
+                    else
+                        logger.error("Error: Topic or Msg = Null or MQTT Client is not Connected !");
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+    }
+
+
 
 
 }

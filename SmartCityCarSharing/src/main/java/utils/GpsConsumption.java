@@ -6,4 +6,8 @@ public class GpsConsumption {
         return currentBatteryLevel - previousBatteryLevel;
     }
 
+
+    public static double consumptionKwh(double totalConsumption, double batteryCapacity, double totalDistance) {
+        return (totalConsumption*batteryCapacity)/(100*totalDistance);
+    }
 }

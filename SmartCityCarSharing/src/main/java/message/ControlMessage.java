@@ -19,4 +19,6 @@ public class ControlMessage extends GenericMessageStructure{
     public ControlMessage(String type, long timestamp, Map<String, Object> metadata) {
         super(type, timestamp, metadata);
     }
+
+
 }
