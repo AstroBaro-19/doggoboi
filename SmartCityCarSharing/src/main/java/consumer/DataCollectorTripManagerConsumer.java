@@ -36,7 +36,6 @@ public class DataCollectorTripManagerConsumer{
     private static final String BATTERY_TARGET_TOPIC = "single/vehicle/+/telemetry/battery";
 
 
-
     //------------------------------------------------------------------------
     private static ObjectMapper mapperGps;
 
@@ -143,7 +142,7 @@ public class DataCollectorTripManagerConsumer{
 
                                 totalConsumption += consumption;
 
-                                logger.info("Updating Battery Consumption: {} %", totalConsumption);
+                                //logger.info("Updating Battery Consumption: {} %", totalConsumption);
 
                                 j++;
 
@@ -221,7 +220,7 @@ public class DataCollectorTripManagerConsumer{
 
                                 totalDistance += distance;
 
-                                logger.info("Updating Total Distance: {} Km", totalDistance);
+                                //logger.info("Updating Total Distance: {} Km", totalDistance);
 
                                 i++;
                             }
@@ -234,8 +233,6 @@ public class DataCollectorTripManagerConsumer{
                             e.printStackTrace();
                         }
                     }
-
-
 
                 }catch (Exception e){
                     e.printStackTrace();
