@@ -254,17 +254,21 @@ public class DataCollectorTripManagerConsumer {
                                  * Sending Control Message to Producer if there are no more WayPoints available
                                  * (Path is Finished) --> Recap/Summary for the Producer
                                  */
-                                if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
-                                    String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
 
-                                    publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>(){
-                                        {
-                                            put("ConsumptionBattery (%)", totalConsumption);
-                                            put("TotalDistance Covered (Km)", totalDistance);
-                                            put("Consumption (Kwh/Km)", consumption_Kwh);
-                                        }
-                                    }));
-                                }
+                                /**
+                                 * if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
+                                 *                                     String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
+                                 *
+                                 *                                     publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>(){
+                                 *                                         {
+                                 *                                             put("ConsumptionBattery (%)", totalConsumption);
+                                 *                                             put("TotalDistance Covered (Km)", totalDistance);
+                                 *                                             put("Consumption (Kwh/Km)", consumption_Kwh);
+                                 *                                         }
+                                 *                                     }));
+                                 *                                 }
+                                 */
+
 
                                 gpsIncr++;
 
