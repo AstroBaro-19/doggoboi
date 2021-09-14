@@ -1,6 +1,5 @@
 package process;
 
-import consumer.DataCollectorTripManagerConsumer;
 import device.ElectricVehicleSmartObject;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
@@ -62,7 +61,6 @@ public class ElectricVehicleSmartObjectProcess {
             });
 
             electricVehicleSmartObject.start();
-
 
 
         }catch (Exception e){

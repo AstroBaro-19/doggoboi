@@ -34,8 +34,11 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private static List<WayPoint> wayPointList=null;
 
+    /**
+     * Initializing WayPoint List as public to generate Control Message
+     * for the ElectricSmartObject (Producer)
+     */
     public static List<WayPoint> wayPointListSize;
-
 
     static {
         try {
@@ -117,12 +120,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                     updateTimer.cancel();
 
-                    /**
-                     * logger.info("Reversing WayPoint List ...");
-                     *                     Collections.reverse(wayPointList);
-                     *                     wayPointListIterator = wayPointList.listIterator();
-                     *                     logger.info("Iterating backward on the GPS Waypoint List ...");
-                     */
                 }
 
 

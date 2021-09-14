@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.WayPoint;
 import message.ControlMessage;
-import message.ControlMessageSummary;
 import message.TelemetryMessage;
 import model.GpsLocationDescriptor;
 import org.eclipse.paho.client.mqttv3.*;
@@ -34,54 +33,48 @@ public class DataCollectorTripManagerConsumer {
     //E.g. fleet/vehicle/e0c7433d-8457-4a6b-8084-595d500076cc/telemetry/#
     private static final String TARGET_TOPIC = "single/vehicle/+/telemetry/#";
 
-    private static final String GPX_FILE_PARKING="tracks/ParkList.gpx";
+    private static final String GPX_FILE_PARKING = "tracks/ParkList.gpx";
 
-    public static List<WayPoint> parkingPointList=null;
+    public static List<WayPoint> parkingPointList = null;
 
-    public static List<WayPoint> distanceParkingPointList=null;
-
-
-
-    //------------------------------------------------------------------------
     private static ObjectMapper mapperGps;
 
-    private static ArrayList<GpsLocationDescriptor> gpsLocationDescriptorArrayList =new ArrayList<>();
+    private static ObjectMapper mapperBattery;
 
-    private static int i=0;
+    private static int gpsIncr = 0;
 
-    private static double totalDistance=0;
+    private static int batteryIncr = 0;
 
-    private static final double ALARM_BATTERY_LEVEL = 2.0;
+    private static final double ALARM_BATTERY_LEVEL = 3.0;
 
     private static final String CONTROL_TOPIC = "control";
 
     private static final String ALARM_MESSAGE_CONTROL_TYPE = "battery_alarm_message";
 
-    private static final String SUMMARY_TYPE = "summary_values_message";
+    private static final String SUMMARY_TYPE = "summary_control_message";
 
+    private static ArrayList<GpsLocationDescriptor> gpsLocationDescriptorArrayList =new ArrayList<>();
 
     private static ArrayList<Double> batteryLevelList =new ArrayList<>();
 
-    private static double totalConsumption=0;
+    private static double totalConsumption=0.0;
 
-    private static int j=0;
-
-    private static ObjectMapper mapperBattery;
-
-    private static boolean isAlarmNotified = false;
+    private static double totalDistance=0.0;
 
     private static double batteryCapacity = 0.5; //KWh
 
-    private static double consumption_Kwh;
+    private static boolean isAlarmNotified = false;
 
-    public static boolean isPathFinished=false;
+    public static boolean isPathFinished = false;
 
-    private static double distanceCurrentPark;
+    private static double consumption_Kwh = 0.0;
 
-    private static double distanceMin=0.0;
+    private static double distanceCurrentPark = 0.0;
+
+    private static double distanceMin = 0.0;
 
 
-    //----------------------------------------------------------------------------
+
 
     public static void main(String [ ] args) {
 
@@ -121,11 +114,10 @@ public class DataCollectorTripManagerConsumer {
             mapperGps = new ObjectMapper();
             mapperBattery = new ObjectMapper();
 
-
+            //Loading the GPX file of available car parking into a list
             parkingPointList= GPX.read(GPX_FILE_PARKING).wayPoints().collect(Collectors.toList());
 
-            logger.info("GPX File WayPoints correctly loaded into the list. List size: {}",parkingPointList.size());
-
+            logger.info("GPX File Parking WayPoints correctly loaded into the list. List size: {}",parkingPointList.size());
 
 
             //Subscribe to the target topic #. In that case the consumer will receive (if authorized) all the message
@@ -136,11 +128,16 @@ public class DataCollectorTripManagerConsumer {
 
                 //logger.info("Received Data (Topic: {}) -> Data: {}", topic, new String(msg.getPayload()));
 
-                //De-serialization
+                //De-serialization plus filtering on received message (msg)
                 Optional<TelemetryMessage<Object>> telemetryMessageOptional = parseTelemetryMessagePayload(msg);
 
 
+
                 try {
+
+                    /*
+                     * De-serialization of Battery's TelemetryMessage
+                     */
                     if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(BatterySensorResource.RESOURCE_TYPE)) {
 
                         Double newBatteryLevel = (Double) telemetryMessageOptional.get().getDataValue();
@@ -149,13 +146,13 @@ public class DataCollectorTripManagerConsumer {
 
                         batteryLevelList.add(newBatteryLevel);
 
-                        /**
+                        /*
                          * Updating the Battery level consumption using the updated values constantly received by the consumer
                          */
                         try {
                             if (batteryLevelList.size() > 1) {
                                 double consumptionBattery = GpsConsumption.consumptionCalc(
-                                        batteryLevelList.get(j),
+                                        batteryLevelList.get(batteryIncr),
                                         newBatteryLevel
                                 );
 
@@ -176,7 +173,7 @@ public class DataCollectorTripManagerConsumer {
                                         totalDistance,
                                         consumption_Kwh);
 
-                                j++;
+                                batteryIncr++;
 
                             }
 
@@ -203,10 +200,10 @@ public class DataCollectorTripManagerConsumer {
 
                                 publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>(){
                                     {
-                                        put("", gpsLocationDescriptorArrayList.get(i));
+                                        put("Parking_Lat", gpsLocationDescriptorArrayList.get(gpsIncr).getLatitude());
+                                        put("Parking_Long", gpsLocationDescriptorArrayList.get(gpsIncr).getLongitude());
                                         put("Distance (meters)",distanceMin);
 
-                                        //TODO - calculate distance point-to-point
                                     }
                                 }));
                             }
@@ -214,7 +211,9 @@ public class DataCollectorTripManagerConsumer {
 
                     }
 
-
+                    /*
+                     * De-serialization of Gps's TelemetryMessage
+                     */
                     if(telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(GpsGpxSensorResource.RESOURCE_TYPE)) {
                         GpsLocationDescriptor gpsLocationDescriptor = (GpsLocationDescriptor) telemetryMessageOptional.get().getDataValue();
                         logger.info("New Gps Telemetry Data Received ! Data: {}", gpsLocationDescriptor);
@@ -222,7 +221,7 @@ public class DataCollectorTripManagerConsumer {
                         // Adding new received WayPoint into the List
                         gpsLocationDescriptorArrayList.add(gpsLocationDescriptor);
 
-                        /**
+                        /*
                          * Updating Distance between two points, using the gpsLocationDescriptorArrayList
                          * -> Checking the size of the list if the distance calculation is possible
                          */
@@ -231,33 +230,35 @@ public class DataCollectorTripManagerConsumer {
 
                                 double distance = GpsDistance.distancePath(
                                         gpsLocationDescriptor.getLatitude(),
-                                        gpsLocationDescriptorArrayList.get(i).getLatitude(),
+                                        gpsLocationDescriptorArrayList.get(gpsIncr).getLatitude(),
                                         gpsLocationDescriptor.getLongitude(),
-                                        gpsLocationDescriptorArrayList.get(i).getLongitude(),
+                                        gpsLocationDescriptorArrayList.get(gpsIncr).getLongitude(),
                                         gpsLocationDescriptor.getElevation(),
-                                        gpsLocationDescriptorArrayList.get(i).getElevation()
+                                        gpsLocationDescriptorArrayList.get(gpsIncr).getElevation()
                                 );
 
                                 totalDistance += distance;
 
                                 //logger.info("Updating Total Distance: {} Km", totalDistance);
 
+                                /*
+                                 * Calculating the minimum distance between the currentWayPoint and the parkingWayPoint (for loop)
+                                 */
                                 for (WayPoint parkingPoint : parkingPointList) {
                                     distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
                                     if(distanceMin==0.0 || distanceCurrentPark<distanceMin){
                                         distanceMin = distanceCurrentPark;
-
-
-                                        //logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceCurrentPark, parkingPoint);
-                                        //logger.info("Minimum distance: {}",distanceMin);
-
                                     }
                                 }
 
+                                /*
+                                 * Sending Control Message to Producer if there are no more WayPoints available
+                                 * (Path is Finished) --> Recap/Summary for the Producer
+                                 */
                                 if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
                                     String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
 
-                                    publishControlMessageSummary(client, controlTopic, new ControlMessageSummary(SUMMARY_TYPE, new HashMap<>(){
+                                    publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>(){
                                         {
                                             put("ConsumptionBattery (%)", totalConsumption);
                                             put("TotalDistance Covered (Km)", totalDistance);
@@ -266,7 +267,7 @@ public class DataCollectorTripManagerConsumer {
                                     }));
                                 }
 
-                                i++;
+                                gpsIncr++;
 
                             }
 
@@ -281,7 +282,6 @@ public class DataCollectorTripManagerConsumer {
 
             });
 
-
         }
 
         catch (Exception e){
@@ -294,7 +294,12 @@ public class DataCollectorTripManagerConsumer {
         return originalValue - newValue >= ALARM_BATTERY_LEVEL;
     }
 
-
+    /**
+     * Filtering the incoming messages, only one Consumer (DataCollector&TripManager)
+     *
+     * @param mqttMessage as Json Message
+     * @return de-serialized message
+     */
     private static Optional<TelemetryMessage<Object>> parseTelemetryMessagePayload(MqttMessage mqttMessage){
 
         try{
@@ -352,42 +357,6 @@ public class DataCollectorTripManagerConsumer {
             }
         }).start();
     }
-
-    private static void publishControlMessageSummary(IMqttClient mqttClient, String topic, ControlMessageSummary controlMessageSummary) throws MqttException, JsonProcessingException {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                try{
-
-                    logger.info("Sending to topic: {} -> Data: {}", topic, controlMessageSummary);
-
-                    if(mqttClient != null && mqttClient.isConnected() && controlMessageSummary != null && topic != null){
-
-                        String messagePayload = mapperBattery.writeValueAsString(controlMessageSummary);
-
-                        MqttMessage mqttMessage = new MqttMessage(messagePayload.getBytes());
-                        mqttMessage.setQos(0);
-
-                        mqttClient.publish(topic, mqttMessage);
-
-                        logger.info("Data Correctly Published to topic: {}", topic);
-
-                    }
-                    else
-                        logger.error("Error: Topic or Msg = Null or MQTT Client is not Connected !");
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-
-            }
-        }).start();
-    }
-
-
-
 
 }
 
