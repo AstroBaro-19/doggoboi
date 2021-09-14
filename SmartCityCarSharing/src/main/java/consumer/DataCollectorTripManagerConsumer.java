@@ -80,13 +80,14 @@ public class DataCollectorTripManagerConsumer {
 
     private static double distanceCurrentPark;
 
+    private static double distanceMin=0.0;
+
 
     //----------------------------------------------------------------------------
 
     public static void main(String [ ] args) {
 
         logger.info("MQTT Consumer Tester Started ...");
-
 
         try{
 
@@ -214,7 +215,7 @@ public class DataCollectorTripManagerConsumer {
                                         //put("car_parking_id", "freepark-001");
                                         //put("car_parking_lat", 44.79454615000001);
                                         //put("car_parking_lng", 10.3359437);
-                                        put("Car_Parking_data",batteryHistoryMap);
+                                        put(gpsLocationDescriptorArrayList.get(i).toString(),distanceMin);
 
                                         //TODO - calculate distance point-to-point
                                     }
@@ -260,27 +261,31 @@ public class DataCollectorTripManagerConsumer {
 
                             for (WayPoint parkingPoint : parkingPointList) {
                                 distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
+                                if(distanceMin==0.0 || distanceCurrentPark<distanceMin){
+                                    distanceMin = distanceCurrentPark;
 
 
                                 logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceCurrentPark, parkingPoint);
+                                logger.info("Minimum distance: {}",distanceMin);
 
+                            }
                             }
 
                             /**
                              * //DISTANZA PUNTO-PUNTO (linea d'aria)
-                             *                             for (WayPoint parkingPoint : parkingPointList) {
-                             *                                 distanceParkPoint = GpsDistance.distancePark(
-                             *                                         gpsLocationDescriptor.getLatitude(),
-                             *                                         parkingPoint.getLatitude(),
-                             *                                         gpsLocationDescriptor.getLongitude(),
-                             *                                         parkingPoint.getLongitude(),
-                             *                                         gpsLocationDescriptor.getElevation(),
-                             *                                         parkingPoint.getElevation()
-                             *                                 );
+                             * for (WayPoint parkingPoint : parkingPointList) {
+                             * distanceParkPoint = GpsDistance.distancePark(
+                             * gpsLocationDescriptor.getLatitude(),
+                             * parkingPoint.getLatitude(),
+                             * gpsLocationDescriptor.getLongitude(),
+                             * parkingPoint.getLongitude(),
+                             * gpsLocationDescriptor.getElevation(),
+                             * parkingPoint.getElevation()
+                             * );
                              *
                              *
-                             *                                 logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceParkPoint, parkingPoint);
-                             *                             }
+                             * logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceParkPoint, parkingPoint);
+                             * }
                              */
 
 
@@ -310,7 +315,6 @@ public class DataCollectorTripManagerConsumer {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-
 
             });
 
@@ -423,5 +427,6 @@ public class DataCollectorTripManagerConsumer {
 
 
 }
+
 
 
