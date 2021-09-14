@@ -20,5 +20,4 @@ public class ControlMessage extends GenericMessageStructure{
         super(type, timestamp, metadata);
     }
 
-
 }

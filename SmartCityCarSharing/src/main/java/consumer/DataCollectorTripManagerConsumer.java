@@ -74,9 +74,7 @@ public class DataCollectorTripManagerConsumer {
 
     private static double consumption_Kwh;
 
-    public static boolean isPathFinished;
-
-    private static double distanceParkPoint;
+    public static boolean isPathFinished=false;
 
     private static double distanceCurrentPark;
 
@@ -123,7 +121,6 @@ public class DataCollectorTripManagerConsumer {
             mapperGps = new ObjectMapper();
             mapperBattery = new ObjectMapper();
 
-            isPathFinished = false;
 
             parkingPointList= GPX.read(GPX_FILE_PARKING).wayPoints().collect(Collectors.toList());
 
@@ -166,28 +163,22 @@ public class DataCollectorTripManagerConsumer {
 
                                 //logger.info("Updating Battery Consumption: {} %", totalConsumption);
 
+                                consumption_Kwh = GpsConsumption.consumptionKwh(
+                                        totalConsumption,
+                                        batteryCapacity,
+                                        totalDistance
+                                );
+
+
+                                logger.info("Consumption: {} % - BatteryCapacity: {} Kwh - TotalDistance Covered: {} Km - Consumption: {} Kwh/Km",
+                                        totalConsumption,
+                                        batteryCapacity,
+                                        totalDistance,
+                                        consumption_Kwh);
+
                                 j++;
 
-                            } else {
-                                logger.info("Waiting for new Battery Level Value updates ...");
                             }
-
-                            consumption_Kwh = GpsConsumption.consumptionKwh(
-                                    totalConsumption,
-                                    batteryCapacity,
-                                    totalDistance
-                            );
-
-
-                            logger.info("Consumption: {} % - BatteryCapacity: {} Kwh - TotalDistance Covered: {} Km - Consumption: {} Kwh/Km",
-                                    totalConsumption,
-                                    batteryCapacity,
-                                    totalDistance,
-                                    consumption_Kwh);
-
-                            //TODO - QUI CALCOLO DISTANZA LISTA???
-
-
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -212,10 +203,8 @@ public class DataCollectorTripManagerConsumer {
 
                                 publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>(){
                                     {
-                                        //put("car_parking_id", "freepark-001");
-                                        //put("car_parking_lat", 44.79454615000001);
-                                        //put("car_parking_lng", 10.3359437);
-                                        put(gpsLocationDescriptorArrayList.get(i).toString(),distanceMin);
+                                        put("", gpsLocationDescriptorArrayList.get(i));
+                                        put("Distance (meters)",distanceMin);
 
                                         //TODO - calculate distance point-to-point
                                     }
@@ -253,64 +242,38 @@ public class DataCollectorTripManagerConsumer {
 
                                 //logger.info("Updating Total Distance: {} Km", totalDistance);
 
+                                for (WayPoint parkingPoint : parkingPointList) {
+                                    distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
+                                    if(distanceMin==0.0 || distanceCurrentPark<distanceMin){
+                                        distanceMin = distanceCurrentPark;
+
+
+                                        //logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceCurrentPark, parkingPoint);
+                                        //logger.info("Minimum distance: {}",distanceMin);
+
+                                    }
+                                }
+
+                                if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
+                                    String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
+
+                                    publishControlMessageSummary(client, controlTopic, new ControlMessageSummary(SUMMARY_TYPE, new HashMap<>(){
+                                        {
+                                            put("ConsumptionBattery (%)", totalConsumption);
+                                            put("TotalDistance Covered (Km)", totalDistance);
+                                            put("Consumption (Kwh/Km)", consumption_Kwh);
+                                        }
+                                    }));
+                                }
+
                                 i++;
-                            }
-                            else {
-                                logger.info("Waiting for new Gps Waypoints ...");
-                            }
-
-                            for (WayPoint parkingPoint : parkingPointList) {
-                                distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
-                                if(distanceMin==0.0 || distanceCurrentPark<distanceMin){
-                                    distanceMin = distanceCurrentPark;
-
-
-                                logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceCurrentPark, parkingPoint);
-                                logger.info("Minimum distance: {}",distanceMin);
 
                             }
-                            }
-
-                            /**
-                             * //DISTANZA PUNTO-PUNTO (linea d'aria)
-                             * for (WayPoint parkingPoint : parkingPointList) {
-                             * distanceParkPoint = GpsDistance.distancePark(
-                             * gpsLocationDescriptor.getLatitude(),
-                             * parkingPoint.getLatitude(),
-                             * gpsLocationDescriptor.getLongitude(),
-                             * parkingPoint.getLongitude(),
-                             * gpsLocationDescriptor.getElevation(),
-                             * parkingPoint.getElevation()
-                             * );
-                             *
-                             *
-                             * logger.info("Distance from currentWayPoint to ParkingPoint: {} - ParkingPoint: {}", distanceParkPoint, parkingPoint);
-                             * }
-                             */
-
-
-
-
-                            /**
-                             * String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
-                             *
-                             *                             publishControlMessageSummary(client, controlTopic, new ControlMessageSummary(SUMMARY_TYPE, new HashMap<>(){
-                             *                                 {
-                             *                                     put("ConsumptionBattery (%)", totalConsumption);
-                             *                                     put("TotalDistance Covered (Km)", totalDistance);
-                             *                                     put("Consumption (Kwh/Km)", consumption_Kwh);
-                             *                                 }
-                             *                             }));
-                             */
-
-
-
 
                         }catch (Exception e){
                             e.printStackTrace();
                         }
                     }
-
 
                 }catch (Exception e){
                     e.printStackTrace();
