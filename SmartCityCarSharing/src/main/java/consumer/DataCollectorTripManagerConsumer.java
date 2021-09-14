@@ -167,9 +167,8 @@ public class DataCollectorTripManagerConsumer {
                                 );
 
 
-                                logger.info("Consumption: {} % - BatteryCapacity: {} Kwh - TotalDistance Covered: {} Km - Consumption: {} Kwh/Km",
+                                logger.info("Consumption: {} % - TotalDistance Covered: {} Km - Consumption: {} Kwh/Km",
                                         totalConsumption,
-                                        batteryCapacity,
                                         totalDistance,
                                         consumption_Kwh);
 
