@@ -120,7 +120,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
                     //Notify the Consumer this is the last point on the list, receiving the same coordinates twice
                     notifyUpdate(updatedGpsLocationDescriptor);
-                    logger.info("Last Gps WayPoint on the list ...");
 
                     updateTimer.cancel();
 

@@ -260,6 +260,8 @@ public class DataCollectorTripManagerConsumer {
                                         Objects.equals(gpsLocationDescriptor.getLongitude(), gpsLocationDescriptorArrayList.get(gpsIncr).getLongitude()) &&
                                         Objects.equals(gpsLocationDescriptor.getElevation(), gpsLocationDescriptorArrayList.get(gpsIncr).getElevation())){
 
+                                    logger.info("Same Gps WayPoint received. Path is finished ...");
+
                                     String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
 
                                     publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>(){
