@@ -220,6 +220,7 @@ public class DataCollectorTripManagerConsumer {
                         // Adding new received WayPoint into the List
                         gpsLocationDescriptorArrayList.add(gpsLocationDescriptor);
 
+
                         /*
                          * Updating Distance between two points, using the gpsLocationDescriptorArrayList
                          * -> Checking the size of the list if the distance calculation is possible
@@ -252,27 +253,28 @@ public class DataCollectorTripManagerConsumer {
 
                                 /*
                                  * Sending Control Message to Producer if there are no more WayPoints available
+                                 * Check if the WayPoint List has ended by receiving the same Gps WayPoint
                                  * (Path is Finished) --> Recap/Summary for the Producer
                                  */
+                                if (Objects.equals(gpsLocationDescriptor.getLatitude(), gpsLocationDescriptorArrayList.get(gpsIncr).getLatitude()) &&
+                                        Objects.equals(gpsLocationDescriptor.getLongitude(), gpsLocationDescriptorArrayList.get(gpsIncr).getLongitude()) &&
+                                        Objects.equals(gpsLocationDescriptor.getElevation(), gpsLocationDescriptorArrayList.get(gpsIncr).getElevation())){
 
-                                /**
-                                 * if (gpsLocationDescriptorArrayList.size()==GpsGpxSensorResource.wayPointListSize.size()){
-                                 *                                     String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
-                                 *
-                                 *                                     publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>(){
-                                 *                                         {
-                                 *                                             put("ConsumptionBattery (%)", totalConsumption);
-                                 *                                             put("TotalDistance Covered (Km)", totalDistance);
-                                 *                                             put("Consumption (Kwh/Km)", consumption_Kwh);
-                                 *                                         }
-                                 *                                     }));
-                                 *                                 }
-                                 */
+                                    String controlTopic = String.format("%s/%s", topic.replace("/telemetry/gps", ""), CONTROL_TOPIC);
 
+                                    publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>(){
+                                        {
+                                            put("ConsumptionBattery (%)", totalConsumption);
+                                            put("TotalDistance Covered (Km)", totalDistance);
+                                            put("Consumption (Kwh/Km)", consumption_Kwh);
+                                        }
+                                    }));
+                                }
 
                                 gpsIncr++;
-
                             }
+
+
 
                         }catch (Exception e){
                             e.printStackTrace();
