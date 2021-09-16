@@ -45,7 +45,7 @@ public class DataCollectorTripManagerConsumer {
 
     private static int batteryIncr = 0;
 
-    private static final double ALARM_BATTERY_LEVEL = 3.0;
+    private static final double ALARM_BATTERY_LEVEL = 2.0;
 
     private static final String CONTROL_TOPIC = "control";
 
@@ -71,7 +71,13 @@ public class DataCollectorTripManagerConsumer {
 
     private static double distanceCurrentPark = 0.0;
 
-    private static double distanceMin;
+    //Initializing distanceMin for Distance currentPoint - nearest ParkingPoint calculation
+    private static double distanceMin=1000.0;
+
+    private static double distanceLat;
+    private static double distanceLong;
+
+
 
 
 
@@ -199,8 +205,8 @@ public class DataCollectorTripManagerConsumer {
 
                                 publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>(){
                                     {
-                                        put("Parking_Lat", gpsLocationDescriptorArrayList.get(gpsIncr).getLatitude());
-                                        put("Parking_Long",gpsLocationDescriptorArrayList.get(gpsIncr).getLongitude());
+                                        put("Parking_Lat", distanceLat);
+                                        put("Parking_Long",distanceLong);
                                         put("Distance (meters)",distanceMin);
 
                                     }
@@ -244,19 +250,22 @@ public class DataCollectorTripManagerConsumer {
                                 /*
                                  * Calculating the minimum distance between the currentWayPoint and the parkingWayPoint (for loop)
                                  */
+                                distanceMin=1000.0;
 
                                 for (WayPoint parkingPoint : parkingPointList) {
                                     distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
                                     //logger.info("Parking: {} - Distance: {}",parkingPoint,distanceCurrentPark);
 
-                                    if(distanceMin==0.0 ||distanceCurrentPark<distanceMin){
+                                    if(distanceMin==1000.0 || distanceCurrentPark<distanceMin){
                                         distanceMin=distanceCurrentPark;
+                                        distanceLat=parkingPoint.getLatitude().doubleValue();
+                                        distanceLong=parkingPoint.getLongitude().doubleValue();
                                     }
 
-                                    logger.info("DistanceMin: {}",distanceMin);
+                                    logger.info("DistanceMin: {} - ParkingPoint: {}",distanceMin,parkingPoint);
 
                                 }
-                                distanceMin=0.0;
+
 
                                 /*
                                  * Sending Control Message to Producer if there are no more WayPoints available
