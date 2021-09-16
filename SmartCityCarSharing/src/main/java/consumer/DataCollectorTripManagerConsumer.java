@@ -71,7 +71,7 @@ public class DataCollectorTripManagerConsumer {
 
     private static double distanceCurrentPark = 0.0;
 
-    private static double distanceMin = 0.0;
+    private static double distanceMin;
 
 
 
@@ -200,7 +200,7 @@ public class DataCollectorTripManagerConsumer {
                                 publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>(){
                                     {
                                         put("Parking_Lat", gpsLocationDescriptorArrayList.get(gpsIncr).getLatitude());
-                                        put("Parking_Long", gpsLocationDescriptorArrayList.get(gpsIncr).getLongitude());
+                                        put("Parking_Long",gpsLocationDescriptorArrayList.get(gpsIncr).getLongitude());
                                         put("Distance (meters)",distanceMin);
 
                                     }
@@ -244,11 +244,19 @@ public class DataCollectorTripManagerConsumer {
                                 /*
                                  * Calculating the minimum distance between the currentWayPoint and the parkingWayPoint (for loop)
                                  */
+
                                 for (WayPoint parkingPoint : parkingPointList) {
                                     distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
+                                    logger.info("Parking: {} - Distance: {}",parkingPoint,distanceCurrentPark);
+
+                                    distanceMin=distanceCurrentPark;
+
                                     if(distanceMin==0.0 || distanceCurrentPark<distanceMin){
                                         distanceMin = distanceCurrentPark;
                                     }
+                                    logger.info("DistanceMin: {}",distanceMin);
+
+
                                 }
 
                                 /*
