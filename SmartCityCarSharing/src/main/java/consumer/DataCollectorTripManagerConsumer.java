@@ -247,17 +247,16 @@ public class DataCollectorTripManagerConsumer {
 
                                 for (WayPoint parkingPoint : parkingPointList) {
                                     distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
-                                    logger.info("Parking: {} - Distance: {}",parkingPoint,distanceCurrentPark);
+                                    //logger.info("Parking: {} - Distance: {}",parkingPoint,distanceCurrentPark);
 
-                                    distanceMin=distanceCurrentPark;
-
-                                    if(distanceMin==0.0 || distanceCurrentPark<distanceMin){
-                                        distanceMin = distanceCurrentPark;
+                                    if(distanceMin==0.0 ||distanceCurrentPark<distanceMin){
+                                        distanceMin=distanceCurrentPark;
                                     }
+
                                     logger.info("DistanceMin: {}",distanceMin);
 
-
                                 }
+                                distanceMin=0.0;
 
                                 /*
                                  * Sending Control Message to Producer if there are no more WayPoints available
