@@ -262,7 +262,7 @@ public class DataCollectorTripManagerConsumer {
                                         distanceLong=parkingPoint.getLongitude().doubleValue();
                                     }
 
-                                    logger.info("DistanceMin: {} - ParkingPoint: {}",distanceMin,parkingPoint);
+                                    //logger.info("DistanceMin: {} - ParkingPoint: {}",distanceMin,parkingPoint);
 
                                 }
 
