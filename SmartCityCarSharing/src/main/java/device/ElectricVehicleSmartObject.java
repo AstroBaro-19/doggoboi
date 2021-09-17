@@ -118,9 +118,7 @@ public class ElectricVehicleSmartObject {
 
                                     try {
                                         publishTelemetryData(topic, new TelemetryMessage(smartObjectResource.getType(),updatedValue));
-                                    } catch (MqttException e) {
-                                        e.printStackTrace();
-                                    } catch (JsonProcessingException e) {
+                                    } catch (MqttException | JsonProcessingException e) {
                                         e.printStackTrace();
                                     }
 
