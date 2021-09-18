@@ -1,6 +1,5 @@
 package consumer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jenetics.jpx.GPX;
@@ -61,7 +60,7 @@ public class DataCollectorTripManagerConsumer {
 
     private static double totalDistance=0.0;
 
-    private static double batteryCapacity = 0.5; //KWh
+    private static final double batteryCapacity = 0.5; //KWh
 
     private static boolean isAlarmNotified = false;
 
@@ -75,9 +74,8 @@ public class DataCollectorTripManagerConsumer {
     private static double distanceMin=1000.0;
 
     private static double distanceLat;
+
     private static double distanceLong;
-
-
 
 
 
@@ -250,7 +248,7 @@ public class DataCollectorTripManagerConsumer {
                                 /*
                                  * Calculating the minimum distance between the currentWayPoint and the parkingWayPoint (for loop)
                                  */
-                                distanceMin=1000.0;
+                                distanceMin = 1000.0;
 
                                 for (WayPoint parkingPoint : parkingPointList) {
                                     distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor,parkingPoint);
@@ -272,6 +270,7 @@ public class DataCollectorTripManagerConsumer {
                                  * Check if the WayPoint List has ended by receiving the same Gps WayPoint
                                  * (Path is Finished) --> Recap/Summary for the Producer
                                  */
+
                                 if (Objects.equals(gpsLocationDescriptor.getLatitude(), gpsLocationDescriptorArrayList.get(gpsIncr).getLatitude()) &&
                                         Objects.equals(gpsLocationDescriptor.getLongitude(), gpsLocationDescriptorArrayList.get(gpsIncr).getLongitude()) &&
                                         Objects.equals(gpsLocationDescriptor.getElevation(), gpsLocationDescriptorArrayList.get(gpsIncr).getElevation())){
@@ -282,11 +281,12 @@ public class DataCollectorTripManagerConsumer {
 
                                     publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>(){
                                         {
-                                            put("ConsumptionBattery (%)", totalConsumption);
-                                            put("TotalDistance Covered (Km)", totalDistance);
-                                            put("Consumption (Kwh/Km)", consumption_Kwh);
+                                            put("ConsumptionBattery (%) ", totalConsumption);
+                                            put("TotalDistance Covered (Km) ", totalDistance);
+                                            put("Consumption (Kwh/Km) ", consumption_Kwh);
                                         }
                                     }));
+
                                 }
 
                                 gpsIncr++;
@@ -348,7 +348,7 @@ public class DataCollectorTripManagerConsumer {
     }
 
 
-    private static void publishControlMessage(IMqttClient mqttClient, String topic, ControlMessage controlMessage) throws MqttException, JsonProcessingException {
+    private static void publishControlMessage(IMqttClient mqttClient, String topic, ControlMessage controlMessage) {
 
         new Thread(new Runnable() {
             @Override

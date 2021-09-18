@@ -55,7 +55,6 @@ public abstract class SmartObjectResource<T> {
                         e.printStackTrace();
                     }
                 }
-                    //TODO - chidere consiglio ai boys, errore su parametro resourceDataListener
             });
         else
             logger.error("Empty or Null Resource Data Listener ! Nothing to notify ...");

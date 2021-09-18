@@ -34,20 +34,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private static List<WayPoint> wayPointList=null;
 
-    /**
-     * Initializing WayPoint List as public to generate Control Message
-     * for the ElectricSmartObject (Producer)
-     */
-    public static List<WayPoint> wayPointListSize;
-
-    static {
-        try {
-            wayPointListSize = GPX.read(GPX_FILE_NAME).wayPoints().collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private static ListIterator<WayPoint> wayPointListIterator;
 
 
