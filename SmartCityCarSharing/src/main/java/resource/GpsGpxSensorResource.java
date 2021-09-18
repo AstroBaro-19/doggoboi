@@ -5,8 +5,6 @@ import io.jenetics.jpx.*;
 import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +74,8 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     /**
      * -> Start periodic Location Update from existing and available Gpx wayPoints, using a Timer
-     * -> Live: updating distance covered every second (based on available nextPoint in the list)
+     * -> If the path is finished, Timer will be canceled, no more Gps Location updates
+     * -> Sending twice last WayPoint will trigger the SummaryData's Control Message
      */
     private void periodicEventUpdate() {
 
@@ -110,8 +109,6 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
                     updateTimer.cancel();
 
                 }
-
-
             }
         }, TASK_DELAY_TIME, UPDATE_PERIOD);
     }

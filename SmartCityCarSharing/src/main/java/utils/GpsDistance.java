@@ -6,6 +6,8 @@ import model.GpsLocationDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 
 /**
  * @authors - Alessandro Baroni, Simone Brunelli, Riccardo Mari
@@ -26,7 +28,7 @@ public class GpsDistance {
      * @param longitude2 in meters
      * @param elevation1 in meters
      * @param elevation2 in meters
-     * @return Distance in Meters
+     * @return Distance in Kilometers
      */
     public static double distancePath(Double latitude1, Double latitude2,
                                       Double longitude1, Double longitude2,
@@ -34,8 +36,8 @@ public class GpsDistance {
 
         final int R = 6371; // Radius of the earth
 
-        if ((latitude1 == latitude2) && (longitude1 == longitude2)) {
-            logger.info("Starting point.");
+        if ((Objects.equals(latitude1, latitude2)) && (Objects.equals(longitude1, longitude2))) {
+            logger.info("Distance: 0.0 m");
         }
 
         double latDistance = Math.toRadians(latitude2 - latitude1);
@@ -44,14 +46,14 @@ public class GpsDistance {
                 + Math.cos(Math.toRadians(latitude1)) * Math.cos(Math.toRadians(latitude2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c * 1000; // convert to meters
+        double distance = R * c * 1000; // Convert to meters
 
 
         double height = elevation1 - elevation2;
 
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
-        return Math.sqrt(distance)/1000;
+        return Math.sqrt(distance)/1000;  // Convert to Km
     }
 
     /**

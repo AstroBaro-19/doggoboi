@@ -42,6 +42,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     private Timer updateTimer = null;
 
+
     public BatterySensorResource() {
         super(UUID.randomUUID().toString(),BatterySensorResource.RESOURCE_TYPE);
         init();

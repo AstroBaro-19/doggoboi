@@ -56,9 +56,9 @@ public class DataCollectorTripManagerConsumer {
 
     private static ArrayList<Double> batteryLevelList =new ArrayList<>();
 
-    private static double totalConsumption=0.0;
+    private static double totalConsumption = 0.0;
 
-    private static double totalDistance=0.0;
+    private static double totalDistance = 0.0;
 
     private static final double batteryCapacity = 0.5; //KWh
 
@@ -281,9 +281,9 @@ public class DataCollectorTripManagerConsumer {
 
                                     publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>(){
                                         {
-                                            put("ConsumptionBattery (%) ", totalConsumption);
-                                            put("TotalDistance Covered (Km) ", totalDistance);
-                                            put("Consumption (Kwh/Km) ", consumption_Kwh);
+                                            put("ConsumptionBattery (%)", totalConsumption);
+                                            put("TotalDistance Covered (Km)", totalDistance);
+                                            put("Consumption (Kwh/Km)", consumption_Kwh);
                                         }
                                     }));
 
