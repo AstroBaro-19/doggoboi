@@ -324,7 +324,7 @@ public class DataCollectorTripManagerConsumer {
      * @return de-serialized message
      */
     private static Optional<TelemetryMessage<Object>> parseTelemetryMessagePayload(MqttMessage mqttMessage){
-
+        //TODO - CONTROLLA SE SERVE
         try{
 
             if(mqttMessage == null)
