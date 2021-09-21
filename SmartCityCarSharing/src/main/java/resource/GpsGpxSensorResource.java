@@ -30,9 +30,9 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private Timer updateTimer = null;
 
-    private static List<WayPoint> wayPointList=null;
+    private  List<WayPoint> wayPointList=null;
 
-    private static ListIterator<WayPoint> wayPointListIterator;
+    private  ListIterator<WayPoint> wayPointListIterator;
 
 
     // Constructors
@@ -57,7 +57,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
             this.updatedGpsLocationDescriptor = new GpsLocationDescriptor();
 
-            this.wayPointList=GPX.read(GPX_FILE_NAME).wayPoints().collect(Collectors.toList());
+            this.wayPointList = GPX.read(GPX_FILE_NAME).wayPoints().collect(Collectors.toList());
 
             logger.info("GPX File WayPoints correctly loaded into the list. List size: {}",wayPointList.size());
 
@@ -120,7 +120,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
     }
 
     public static void main(String[] args) {
-        GpsGpxSensorResource gpsGpxSensorResource= new GpsGpxSensorResource();
+        GpsGpxSensorResource gpsGpxSensorResource = new GpsGpxSensorResource();
         logger.info("New {} Resource Created with Id: {} Updated Value: {}",
                 gpsGpxSensorResource.getType(),
                 gpsGpxSensorResource.getId(),
@@ -131,7 +131,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
             @Override
             public void onDataChange(ResourceDataListener<GpsLocationDescriptor> resource, GpsLocationDescriptor updatedValue) {
                 if (resource!=null && updatedValue!=null)
-                    logger.info("Device Id: {} New updated GPX WayPoint received: {}",gpsGpxSensorResource.getId() ,updatedValue);
+                    logger.info("Device Id: {} - New updated GPX WayPoint received: {}",gpsGpxSensorResource.getId() ,updatedValue);
                 else
                     logger.error("onDataChange Callback: Null Resource or Updated Value...");
             }

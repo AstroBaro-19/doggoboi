@@ -118,7 +118,7 @@ public class ElectricVehicleSmartObject {
                                     String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
 
                                     try {
-                                        publishTelemetryData(topic, new TelemetryMessage(smartObjectResource.getType(),updatedValue));
+                                            publishTelemetryData(topic, new TelemetryMessage(smartObjectResource.getType(),updatedValue));
                                     } catch (MqttException | JsonProcessingException e) {
                                         e.printStackTrace();
                                     }

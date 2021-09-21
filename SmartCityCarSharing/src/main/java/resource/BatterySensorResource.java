@@ -88,6 +88,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
             @Override
             public void run() {
                 if (!DataCollectorTripManagerConsumer.isPathFinished){
+                    
                     updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
                     //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
 
@@ -96,7 +97,6 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
                 }
                 else {
                     updateTimer.cancel();
-
                 }
 
 

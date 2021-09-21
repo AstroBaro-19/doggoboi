@@ -37,7 +37,7 @@ public class GpsDistance {
         final int R = 6371; // Radius of the earth
 
         if ((Objects.equals(latitude1, latitude2)) && (Objects.equals(longitude1, longitude2))) {
-            logger.info("Distance: 0.0 m");
+            logger.info("Same Gps WayPoint received. Path is finished ...");
         }
 
         double latDistance = Math.toRadians(latitude2 - latitude1);
