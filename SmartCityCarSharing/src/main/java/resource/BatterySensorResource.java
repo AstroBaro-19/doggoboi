@@ -1,6 +1,7 @@
 package resource;
 
 
+import consumer.DataCollectorTripManagerConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     private static final long TASK_DELAY_TIME = 5000; //Seconds before starting the periodic update task
 
-    private static final String RESOURCE_TYPE = "iot:sensor:battery";
+    public static final String RESOURCE_TYPE = "iot:sensor:battery";
 
     private double updatedBatteryLevel;
 
@@ -41,7 +42,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     private Timer updateTimer = null;
 
-    // Constructors
+
     public BatterySensorResource() {
         super(UUID.randomUUID().toString(),BatterySensorResource.RESOURCE_TYPE);
         init();
@@ -55,9 +56,9 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     /**
      * Initializing new random Battery Level for the scooter
-     * Range of the battery: {MIN_BATTERY_LEVEL, MAX_BATTERY_LEVEL}
+     * range of the battery: {MIN_BATTERY_LEVEL, MAX_BATTERY_LEVEL}
      *
-     * Modify Battery Level using a Timer [Timer Task]
+     * Modify Battery Level using a Timer
      */
     private void init() {
 
@@ -77,8 +78,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     /**
      * Periodic Task: Randomize Battery Level consumption
-     * TODO - implementing major consumption for "elevation" parameter...??
-      */
+     */
     private void periodicEventUpdate() {
 
         logger.info("Starting new Timer task ... Starts in {} ms ... Update Period: {} ms", TASK_DELAY_TIME, UPDATE_PERIOD);
@@ -87,11 +87,18 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
         this.updateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
-                //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
+                if (!DataCollectorTripManagerConsumer.isPathFinished){
+                    
+                    updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
+                    //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
 
-                //Notify the Listener after data changing
-                notifyUpdate(updatedBatteryLevel);
+                    //Notify the Listener after data changing
+                    notifyUpdate(updatedBatteryLevel);
+                }
+                else {
+                    updateTimer.cancel();
+                }
+
 
             }
         }, TASK_DELAY_TIME, UPDATE_PERIOD);
@@ -102,7 +109,6 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
     public Double loadUpdatedValue() {
         return this.updatedBatteryLevel;
     }
-
 
     public static void main(String[] args) {
 

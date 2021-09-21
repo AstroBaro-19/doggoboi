@@ -21,7 +21,7 @@ public class GpsLocationDescriptor {
 
     private String fileProvider;
 
-    // Constructors
+
     public GpsLocationDescriptor() {
     }
 
@@ -32,7 +32,6 @@ public class GpsLocationDescriptor {
         this.fileProvider = fileProvider;
     }
 
-    // Getter & Setter
     public Double getLatitude() {
         return latitude;
     }

@@ -1,0 +1,11 @@
+#Vehicle Smart Object Configuration
+
+mqttBrokerAddress: 127.0.0.1
+mqttBrokerPort: 1883
+deviceNameSpace: com:iot:vehicle
+basicTopic: "single/vehicle/<vehicleId>/"
+consumerTargetTopic: "single/vehicle/+/telemetry/#"
+startUpDelayMs: 5000
+gpsUpdatePeriodMs: 1000
+batteryUpdatePeriodMs: 5000
+mqttOutgoingClientQoS: 0

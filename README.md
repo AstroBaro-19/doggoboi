@@ -1,4 +1,7 @@
-# doggoboi
-newbie improving in a nutshell
+Will be merged on master, project for the most part completed.
 
-Smart City Car Sharing
+-> Implementation of GpsMonitoringConsumer & gpsDistance calculation
+
+-> Notes: find a solution about joining the consumers ...
+
+-> Using a personalized GPX file
