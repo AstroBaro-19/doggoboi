@@ -31,7 +31,6 @@ public class ElectricVehicleSmartObject {
 
     private static final String CONTROL_TOPIC= "control";
 
-    private static final String EVENT_TOPIC= "event";
 
     private String vehicleId;
 
@@ -107,13 +106,15 @@ public class ElectricVehicleSmartObject {
                             smartObjectResource.getType(),
                             smartObjectResource.getId());
 
-                    // effective registration
+                    // Registration to available resources
                     if (smartObjectResource.getType().equals(GpsGpxSensorResource.RESOURCE_TYPE) ||
                             smartObjectResource.getType().equals(BatterySensorResource.RESOURCE_TYPE)){
                             smartObjectResource.addDataListener(new ResourceDataListener() {
                                 @Override
                                 public void onDataChange(ResourceDataListener resource, Object updatedValue) {
 
+                                    //Sending Topic = single/vehicle/fa18f676-8198-4e9f-90e0-c50a5e419b94/telemetry/battery
+                                    //Sending Topic = single/vehicle/fa18f676-8198-4e9f-90e0-c50a5e419b94/telemetry/gps
                                     String topic = String.format("%s/%s/%s/%s",BASIC_TOPIC,vehicleId,TELEMETRY_TOPIC,resourceEntry.getKey());
 
                                     try {

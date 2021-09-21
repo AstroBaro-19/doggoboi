@@ -196,7 +196,7 @@ public class DataCollectorTripManagerConsumer {
                                 logger.info("BATTERY LEVEL ALARM DETECTED ! Sending Control Notification ...");
                                 isAlarmNotified = true;
 
-                                //Incoming Topic = fleet/vehicle/fa18f676-8198-4e9f-90e0-c50a5e419b94/telemetry/battery
+                                //Incoming Topic = single/vehicle/fa18f676-8198-4e9f-90e0-c50a5e419b94/telemetry/battery
                                 String controlTopic = String.format("%s/%s", topic.replace("/telemetry/battery", ""), CONTROL_TOPIC);
 
 
