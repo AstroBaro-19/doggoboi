@@ -44,7 +44,7 @@ public class DataCollectorTripManagerConsumer {
 
     private static int batteryIncr = 0;
 
-    private static final double ALARM_BATTERY_LEVEL = 2.0;
+    private static final double ALARM_BATTERY_LEVEL = 5.0;
 
     private static final String CONTROL_TOPIC = "control";
 
@@ -296,7 +296,9 @@ public class DataCollectorTripManagerConsumer {
         }
     }
 
-
+    /*
+     * Check if the difference's return value exceeds the Alarm Battery Level threshold
+     */
     private static boolean isBatteryLevelAlarm(Double originalBatteryValue, Double newBatteryValue){
         return originalBatteryValue - newBatteryValue >= ALARM_BATTERY_LEVEL;
     }

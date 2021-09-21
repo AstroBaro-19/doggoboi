@@ -24,7 +24,7 @@ public class GpsGpxSensorResource extends SmartObjectResource<GpsLocationDescrip
 
     private static final long TASK_DELAY_TIME = 5000; //Seconds before starting the periodic update task
 
-    private static final String GPX_FILE_NAME="tracks/Milan_Cathedral.gpx";
+    private static final String GPX_FILE_NAME="tracks/Milan.gpx";
 
     private GpsLocationDescriptor updatedGpsLocationDescriptor= null;
 
