@@ -144,7 +144,7 @@ public class DataCollectorTripManagerConsumer {
 
                         Double newBatteryLevel = (Double) telemetryMessageOptional.get().getDataValue();
 
-                        logger.info("New Battery Telemetry Data Received ! Battery Level: {}", newBatteryLevel);
+                        logger.info("New Battery Telemetry Data Received - Battery Level: {}", newBatteryLevel);
 
                         batteryLevelList.add(newBatteryLevel);
 
@@ -212,7 +212,7 @@ public class DataCollectorTripManagerConsumer {
                      */
                     if (telemetryMessageOptional.isPresent() && telemetryMessageOptional.get().getType().equals(GpsGpxSensorResource.RESOURCE_TYPE)) {
                         GpsLocationDescriptor gpsLocationDescriptor = (GpsLocationDescriptor) telemetryMessageOptional.get().getDataValue();
-                        logger.info("New Gps Telemetry Data Received ! Data: {}", gpsLocationDescriptor);
+                        logger.info("New Gps Telemetry Data Received - Data: {}", gpsLocationDescriptor);
 
                         // Adding new received WayPoint into the List
                         gpsLocationDescriptorArrayList.add(gpsLocationDescriptor);
