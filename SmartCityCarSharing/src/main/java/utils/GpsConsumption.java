@@ -24,18 +24,14 @@ public class GpsConsumption {
     }
 
     /**
-     *
-     * @param totalConsumption as BatteryLevel %
+     *  @param totalConsumption as BatteryLevel %
      * @param batteryCapacity in Kwh
      * @param totalDistance in Kilometers
+     * @return double Consumption [Kwh/Km]
      */
-    public static void consumptionKwh(double totalConsumption, double batteryCapacity, double totalDistance) {
-        double consumption_KwhKm = (totalConsumption * batteryCapacity) / (100 * totalDistance);
+    public static double consumptionKwhKm(double totalConsumption, double batteryCapacity, double totalDistance) {
+        return (totalConsumption * batteryCapacity) / (100 * totalDistance);
 
-        logger.info("BatteryConsumption: {} % - TotalDistance Covered: {} Km - ConsumptionPerKm: {} Kwh/Km",
-                totalConsumption,
-                totalDistance,
-                consumption_KwhKm);
 
     }
 

@@ -66,7 +66,7 @@ public class DataCollectorTripManagerConsumer {
 
     public static boolean isPathFinished = false;
 
-    private static double consumption_Kwh = 0.0;
+    private static double consumptionKwh_Km = 0.0;
 
     private static double distanceCurrentPark = 0.0;
 
@@ -160,11 +160,16 @@ public class DataCollectorTripManagerConsumer {
 
                                 totalConsumption += consumptionBattery;
 
-                                GpsConsumption.consumptionKwh(
+                                consumptionKwh_Km = GpsConsumption.consumptionKwhKm(
                                         totalConsumption,
                                         batteryCapacity,
                                         totalDistance
                                 );
+
+                                logger.info("BatteryConsumption: {} % - TotalDistance Covered: {} Km - ConsumptionPerKm: {} Kwh/Km",
+                                        totalConsumption,
+                                        totalDistance,
+                                        consumptionKwh_Km);
 
                                 batteryIncr++;
 
@@ -268,7 +273,7 @@ public class DataCollectorTripManagerConsumer {
                                         {
                                             put("ConsumptionBattery (%)", totalConsumption);
                                             put("TotalDistance Covered (Km)", totalDistance);
-                                            put("Consumption (Kwh/Km)", consumption_Kwh);
+                                            put("Consumption (Kwh/Km)", consumptionKwh_Km);
                                         }
                                     }));
 
