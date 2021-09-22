@@ -60,6 +60,8 @@ public class DataCollectorTripManagerConsumer {
 
     private static double totalConsumption = 0.0;  // battery %
 
+    private static double currentConsumption =0.0;
+
     private static double totalDistance = 0.0;  // Km
 
     private static boolean isAlarmNotified = false;
@@ -153,8 +155,8 @@ public class DataCollectorTripManagerConsumer {
 
                             logger.info("Vehicle recharged ...");
                             batteryLevelList.clear();
-                            batteryIncr=0;
-
+                            batteryIncr = 0;
+                            currentConsumption = 0;
 
                         }
 
@@ -172,14 +174,17 @@ public class DataCollectorTripManagerConsumer {
 
                                 totalConsumption += consumptionBattery;
 
+                                currentConsumption += consumptionBattery;
+
                                 consumptionKwh_Km = GpsConsumption.consumptionKwhKm(
                                         totalConsumption,
                                         batteryCapacity,
                                         totalDistance
                                 );
 
-                                logger.info("BatteryConsumption: {} % - TotalDistance Covered: {} Km - ConsumptionPerKm: {} Kwh/Km",
+                                logger.info("totalBattery_Consumption: {} %  - currentRun_Consumption: {} - TotalDistance Covered: {} Km - ConsumptionPerKm: {} Kwh/Km",
                                         totalConsumption,
+                                        currentConsumption,
                                         totalDistance,
                                         consumptionKwh_Km);
 
