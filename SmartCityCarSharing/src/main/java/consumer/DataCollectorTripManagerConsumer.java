@@ -71,7 +71,7 @@ public class DataCollectorTripManagerConsumer {
     private static double distanceCurrentPark = 0.0;
 
     //Initializing distanceMin for Distance currentPoint - nearest ParkingPoint calculation
-    private static double distanceMin=1000.0;
+    private static double distanceMin = 1000.0;
 
     private static double distanceParkLat; // Parking Car's Latitude
 
