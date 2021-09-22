@@ -149,13 +149,16 @@ public class DataCollectorTripManagerConsumer {
                         logger.info("New Battery Telemetry Data Received - Battery Level: {}", newBatteryLevel);
 
                         /*
-                         * New User run on vehicle
+                         * New User run on vehicle, reset the main variables
                          */
                         if (!batteryLevelList.isEmpty() && newBatteryLevel > batteryLevelList.get(batteryIncr)){
 
-                            logger.info("Vehicle recharged ...");
+                            logger.info("Vehicle recharged, starting new Vehicle Run ...");
+
                             batteryLevelList.clear();
+
                             batteryIncr = 0;
+
                             currentConsumption = 0;
 
                         }
