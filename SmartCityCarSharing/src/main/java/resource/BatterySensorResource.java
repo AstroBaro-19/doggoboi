@@ -32,7 +32,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     public static final String RESOURCE_TYPE = "iot:sensor:battery";
 
-    private double updatedBatteryLevel = 60.0;
+    private double updatedBatteryLevel;
 
     private Random random = null;
 

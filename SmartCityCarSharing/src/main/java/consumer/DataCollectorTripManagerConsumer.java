@@ -148,9 +148,11 @@ public class DataCollectorTripManagerConsumer {
 
                         logger.info("New Battery Telemetry Data Received - Battery Level: {}", newBatteryLevel);
 
+
                         /*
                          * New User run on vehicle, reset the main variables
                          */
+
                         if (!batteryLevelList.isEmpty() && newBatteryLevel > batteryLevelList.get(batteryIncr)){
 
                             logger.info("Vehicle recharged, starting new Vehicle Run ...");
@@ -161,7 +163,10 @@ public class DataCollectorTripManagerConsumer {
 
                             currentConsumption = 0;
 
+                            isAlarmNotified = false;
+
                         }
+
 
                         batteryLevelList.add(newBatteryLevel);
 
@@ -185,7 +190,7 @@ public class DataCollectorTripManagerConsumer {
                                         totalDistance
                                 );
 
-                                logger.info("totalBattery_Consumption: {} %  - currentRun_Consumption: {} - TotalDistance Covered: {} Km - ConsumptionPerKm: {} Kwh/Km",
+                                logger.info("totalBattery_Consumption: {} %  - currentRun_Consumption: {} % - TotalDistance Covered: {} Km - ConsumptionPerKm: {} Kwh/Km",
                                         totalConsumption,
                                         currentConsumption,
                                         totalDistance,
