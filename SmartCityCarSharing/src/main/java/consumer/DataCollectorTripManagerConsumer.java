@@ -40,10 +40,6 @@ public class DataCollectorTripManagerConsumer {
 
     private static ObjectMapper mapperBattery;
 
-    private static int gpsIncr = 0;
-
-    private static int batteryIncr = 0;
-
     private static final double ALARM_BATTERY_LEVEL = 5.0;
 
     private static final String CONTROL_TOPIC = "control";
@@ -56,26 +52,30 @@ public class DataCollectorTripManagerConsumer {
 
     private static ArrayList<Double> batteryLevelList =new ArrayList<>();
 
-    private static double totalConsumption = 0.0;
+    private static int gpsIncr = 0;
 
-    private static double totalDistance = 0.0;
+    private static int batteryIncr = 0;
 
     private static final double batteryCapacity = 0.5; //KWh
+
+    private static double totalConsumption = 0.0;  // battery %
+
+    private static double totalDistance = 0.0;  // Km
 
     private static boolean isAlarmNotified = false;
 
     public static boolean isPathFinished = false;
 
-    private static double consumptionKwh_Km = 0.0;
+    private static double consumptionKwh_Km = 0.0;  // Kwh/Km
 
     private static double distanceCurrentPark = 0.0;
 
     //Initializing distanceMin for Distance currentPoint - nearest ParkingPoint calculation
     private static double distanceMin=1000.0;
 
-    private static double distanceLat;
+    private static double distanceParkLat; // Parking Car's Latitude
 
-    private static double distanceLong;
+    private static double distanceParkLong; // Parking Car's Longitude
 
 
 
@@ -196,8 +196,8 @@ public class DataCollectorTripManagerConsumer {
 
                                 publishControlMessage(client, controlTopic, new ControlMessage(ALARM_MESSAGE_CONTROL_TYPE, new HashMap<>() {
                                     {
-                                        put("Parking_Lat", distanceLat);
-                                        put("Parking_Long", distanceLong);
+                                        put("Parking_Lat", distanceParkLat);
+                                        put("Parking_Long", distanceParkLong);
                                         put("Distance (meters)", distanceMin);
 
                                     }
@@ -244,15 +244,16 @@ public class DataCollectorTripManagerConsumer {
 
                                 for (WayPoint parkingPoint : parkingPointList) {
                                     distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor, parkingPoint);
+
                                     //logger.info("Parking: {} - Distance: {}",parkingPoint,distanceCurrentPark);
 
                                     if (distanceMin == 1000.0 || distanceCurrentPark < distanceMin) {
                                         distanceMin = distanceCurrentPark;
-                                        distanceLat = parkingPoint.getLatitude().doubleValue();
-                                        distanceLong = parkingPoint.getLongitude().doubleValue();
+                                        distanceParkLat = parkingPoint.getLatitude().doubleValue();
+                                        distanceParkLong = parkingPoint.getLongitude().doubleValue();
                                     }
 
-                                    //logger.info("DistanceMin: {} - ParkingPoint: {}",distanceMin,parkingPoint);
+                                    logger.info("DistanceMin: {} - ParkingPoint: {}",distanceMin,parkingPoint);
 
                                 }
 
