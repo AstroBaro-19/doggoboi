@@ -245,15 +245,11 @@ public class DataCollectorTripManagerConsumer {
                                 for (WayPoint parkingPoint : parkingPointList) {
                                     distanceCurrentPark = GpsDistance.distanceCurrentPark(gpsLocationDescriptor, parkingPoint);
 
-                                    //logger.info("Parking: {} - Distance: {}",parkingPoint,distanceCurrentPark);
-
                                     if (distanceMin == 1000.0 || distanceCurrentPark < distanceMin) {
                                         distanceMin = distanceCurrentPark;
                                         distanceParkLat = parkingPoint.getLatitude().doubleValue();
                                         distanceParkLong = parkingPoint.getLongitude().doubleValue();
                                     }
-
-                                    logger.info("DistanceMin: {} - ParkingPoint: {}",distanceMin,parkingPoint);
 
                                 }
 
