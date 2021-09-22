@@ -293,7 +293,8 @@ public class DataCollectorTripManagerConsumer {
 
                                     publishControlMessage(client, controlTopic, new ControlMessage(SUMMARY_TYPE, new HashMap<>() {
                                         {
-                                            put("ConsumptionBattery (%)", totalConsumption);
+                                            put("totalBattery_Consumption (%)", totalConsumption);
+                                            put("currentRun_Consumption (%)",currentConsumption);
                                             put("TotalDistance Covered (Km)", totalDistance);
                                             put("Consumption (Kwh/Km)", consumptionKwh_Km);
                                         }
