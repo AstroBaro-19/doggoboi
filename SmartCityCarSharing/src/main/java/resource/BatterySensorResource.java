@@ -22,10 +22,6 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     private static final Logger logger = LoggerFactory.getLogger(BatterySensorResource.class);
 
-    private static final double MIN_BATTERY_LEVEL = 50.0;
-
-    private static final double MAX_BATTERY_LEVEL = 70.0;
-
     private static final double MIN_BATTERY_LEVEL_CONSUMPTION = 0.1;
 
     private static final double MAX_BATTERY_LEVEL_CONSUMPTION = 1.0;
@@ -36,7 +32,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
 
     public static final String RESOURCE_TYPE = "iot:sensor:battery";
 
-    private double updatedBatteryLevel;
+    private double updatedBatteryLevel = 60.0;
 
     private Random random = null;
 
@@ -65,7 +61,7 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
         try{
 
             this.random = new Random(System.currentTimeMillis());
-            this.updatedBatteryLevel= MIN_BATTERY_LEVEL + (this.random.nextDouble()*(MAX_BATTERY_LEVEL - MIN_BATTERY_LEVEL));
+            this.updatedBatteryLevel = 60.0;
 
             periodicEventUpdate();
 
@@ -90,7 +86,6 @@ public class BatterySensorResource extends SmartObjectResource<Double> {
                 if (!DataCollectorTripManagerConsumer.isPathFinished){
                     
                     updatedBatteryLevel = updatedBatteryLevel - (MIN_BATTERY_LEVEL_CONSUMPTION + (MAX_BATTERY_LEVEL_CONSUMPTION*random.nextDouble()));
-                    //logger.info("Updated Battery Level: {}", updatedBatteryLevel);
 
                     //Notify the Listener after data changing
                     notifyUpdate(updatedBatteryLevel);

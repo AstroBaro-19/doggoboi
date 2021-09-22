@@ -31,7 +31,7 @@ public class ElectricVehicleSmartObjectProcess {
         try{
 
             //Generate Random Vehicle UUID
-            String vehicleId = UUID.randomUUID().toString();
+            String vehicleId = "iot_vehicle_0001";
 
             //Create MQTT Client
             MqttClientPersistence persistence = new MemoryPersistence();
