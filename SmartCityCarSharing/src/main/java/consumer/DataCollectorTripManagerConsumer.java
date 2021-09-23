@@ -1,5 +1,6 @@
 package consumer;
 
+import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jenetics.jpx.GPX;
@@ -36,9 +37,7 @@ public class DataCollectorTripManagerConsumer {
 
     public static List<WayPoint> parkingPointList = null;
 
-    private static ObjectMapper mapperGps;
-
-    private static ObjectMapper mapperBattery;
+    private static ObjectMapper mapper;
 
     private static final double ALARM_BATTERY_LEVEL = 5.0;
 
@@ -80,8 +79,6 @@ public class DataCollectorTripManagerConsumer {
     private static double distanceParkLong; // Parking Car's Longitude
 
 
-
-
     public static void main(String [ ] args) {
 
         logger.info("MQTT Consumer Tester Started ...");
@@ -117,8 +114,7 @@ public class DataCollectorTripManagerConsumer {
 
             Map<String, Double> batteryHistoryMap = new HashMap<>();
 
-            mapperGps = new ObjectMapper();
-            mapperBattery = new ObjectMapper();
+            mapper = new ObjectMapper();
 
             //Loading the GPX file of available car parking into a list
             parkingPointList= GPX.read(GPX_FILE_PARKING).wayPoints().collect(Collectors.toList());
@@ -348,11 +344,11 @@ public class DataCollectorTripManagerConsumer {
             String payloadString = new String(payloadByteArray);
 
             if (payloadString.contains(GpsGpxSensorResource.RESOURCE_TYPE)){
-                return Optional.ofNullable(mapperGps.readValue(payloadString, new TypeReference<TelemetryMessage<GpsLocationDescriptor>>() {}));
+                return Optional.ofNullable(mapper.readValue(payloadString, new TypeReference<TelemetryMessage<GpsLocationDescriptor>>() {}));
 
             }
             else {
-                return Optional.ofNullable(mapperBattery.readValue(payloadString, new TypeReference<TelemetryMessage<Double>>() {}));
+                return Optional.ofNullable(mapper.readValue(payloadString, new TypeReference<TelemetryMessage<Double>>() {}));
             }
 
         }catch (Exception e){
@@ -374,7 +370,7 @@ public class DataCollectorTripManagerConsumer {
 
                     if(mqttClient != null && mqttClient.isConnected() && controlMessage != null && topic != null){
 
-                        String messagePayload = mapperBattery.writeValueAsString(controlMessage);
+                        String messagePayload = mapper.writeValueAsString(controlMessage);
 
                         MqttMessage mqttMessage = new MqttMessage(messagePayload.getBytes());
                         mqttMessage.setQos(1);
