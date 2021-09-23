@@ -60,7 +60,7 @@ public class DataCollectorTripManagerConsumer {
 
     private static double totalConsumption = 0.0;  // battery %
 
-    private static double currentConsumption =0.0;
+    private static double currentConsumption =0.0; // battery %
 
     private static double totalDistance = 0.0;  // Km
 
@@ -70,7 +70,7 @@ public class DataCollectorTripManagerConsumer {
 
     private static double consumptionKwh_Km = 0.0;  // Kwh/Km
 
-    private static double distanceCurrentPark = 0.0;
+    private static double distanceCurrentPark = 0.0;  // meters
 
     //Initializing distanceMin for Distance currentPoint - nearest ParkingPoint calculation
     private static double distanceMin = 1000.0;
