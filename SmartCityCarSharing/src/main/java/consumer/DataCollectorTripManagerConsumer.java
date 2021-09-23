@@ -377,7 +377,7 @@ public class DataCollectorTripManagerConsumer {
                         String messagePayload = mapperBattery.writeValueAsString(controlMessage);
 
                         MqttMessage mqttMessage = new MqttMessage(messagePayload.getBytes());
-                        mqttMessage.setQos(0);
+                        mqttMessage.setQos(1);
 
                         mqttClient.publish(topic, mqttMessage);
 
